@@ -1,15 +1,24 @@
 package com.civilien.app;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    TextView Title, WelcomeText;
+    EditText NameInput;
+    Button OKButton, CatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +27,28 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Title = (TextView) findViewById(R.id.WelcomeTitle);
+        WelcomeText = (TextView) findViewById(R.id.WelcomeText);
+        OKButton = (Button) findViewById(R.id.ButtonOK);
+        CatButton = (Button) findViewById(R.id.ButtonCat);
+        NameInput = (EditText) findViewById(R.id.WelcomeInput);
+
+        OKButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                String Traveler = NameInput.getText().toString();
+                String Welcome = "Howdy, "+Traveler+"! How is it going?";
+                WelcomeText.setText(Welcome);
             }
         });
+
+        CatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CatActivity.class);
+            }
+        });
+
     }
 
     @Override

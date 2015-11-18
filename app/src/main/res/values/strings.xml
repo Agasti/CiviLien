@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">CiviLien</string>
     <string name="action_settings">Settings</string>
+    <string name="WelcomeTitle">Welcome to CiviLien</string>
+    <string name="WelcomeText">Hi there, traveler!</string>
+    <string name="ButtonOK">OK</string>
+    <string name="title_activity_cat">CatActivity</string>
 </resources>

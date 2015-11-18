@@ -9,6 +9,57 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main" tools:context=".MainActivity">
 
-    <TextView android:text="Hello World!" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView android:text="@string/WelcomeTitle" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/WelcomeTitle"
+        android:textColor="#0000FF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/WelcomeText"
+        android:id="@+id/WelcomeText"
+        android:layout_below="@+id/WelcomeTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="27dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/WelcomeInput"
+        android:layout_below="@+id/WelcomeText"
+        android:layout_alignRight="@+id/WelcomeText"
+        android:layout_alignEnd="@+id/WelcomeText"
+        android:layout_marginTop="28dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:id="@+id/ButtonOK"
+        android:layout_below="@+id/WelcomeInput"
+        android:layout_alignRight="@+id/WelcomeInput"
+        android:layout_alignEnd="@+id/WelcomeInput"
+        android:layout_marginTop="28dp"
+        android:textSize="25dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ButtonCat"
+        android:layout_below="@+id/ButtonOK"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="78dp"
+        android:textSize="25dp"
+        android:text="Meow" />
+
 </RelativeLayout>
