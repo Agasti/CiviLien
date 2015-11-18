@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.jar.Attributes;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
         CatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = NameInput.getText().toString();
+
                 Intent intent = new Intent(MainActivity.this, CatActivity.class);
+                intent.putExtra(CatActivity.ExtraName, name);
+                startActivity(intent);
             }
         });
 

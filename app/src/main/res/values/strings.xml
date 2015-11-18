@@ -5,4 +5,5 @@
     <string name="WelcomeText">Hi there, traveler!</string>
     <string name="ButtonOK">OK</string>
     <string name="title_activity_cat">CatActivity</string>
+    <string name="imagedescription">ImageView</string>
 </resources>
