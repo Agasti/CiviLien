@@ -9,6 +9,52 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main" tools:context=".MainActivity">
 
-    <TextView android:text="Hello World!" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView android:text="Welcome!" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/welcomeText" />
+
+    <GridLayout
+        android:id="@+id/menuGrid"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="79dp"
+        android:layout_centerHorizontal="true"
+        android:padding="20dp">
+
+        <Button
+            android:layout_width="119dp"
+            android:layout_height="wrap_content"
+            android:text="Map"
+            android:id="@+id/mapButton"
+            android:layout_row="0"
+            android:layout_column="0" />
+
+        <Button
+            android:layout_width="119dp"
+            android:layout_height="wrap_content"
+            android:text="Browse"
+            android:id="@+id/browseButton"
+            android:layout_row="0"
+            android:layout_column="1" />
+
+        <Button
+            android:layout_width="119dp"
+            android:layout_height="wrap_content"
+            android:text="CiviMates"
+            android:id="@+id/matesButton"
+            android:layout_row="1"
+            android:layout_column="0" />
+
+        <Button
+            android:layout_width="119dp"
+            android:layout_height="wrap_content"
+            android:text="Messages"
+            android:id="@+id/messagesButton"
+            android:layout_row="1"
+            android:layout_column="1" />
+
+    </GridLayout>
+
 </RelativeLayout>
