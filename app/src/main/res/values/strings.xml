@@ -2,4 +2,9 @@
     <string name="app_name">CiviLien</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
+    <string name="IncidentCategory">Category</string>
+    <string name="IncidentType">Type</string>
+    <string name="IncidentTitle">Title</string>
+    <string name="btnOK">OK</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>
