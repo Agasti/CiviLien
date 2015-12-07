@@ -6,5 +6,6 @@
     <string name="IncidentType">Type</string>
     <string name="IncidentTitle">Title</string>
     <string name="btnOK">OK</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="BrowseTitle">Browse Incidents</string>
+    <string name="CreateIncidentTitle">Create Incident</string>
 </resources>

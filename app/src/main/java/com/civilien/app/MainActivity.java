@@ -39,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        browse = (Button) findViewById(R.id.browseButton);
+        browse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

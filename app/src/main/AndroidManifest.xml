@@ -40,7 +40,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.civilien.app.MainActivity" />
         </activity>
-        <activity android:name=".CreateIncident" />
+        <activity
+            android:name=".CreateIncident"
+            android:label="@string/CreateIncidentTitle"/>
+        <activity
+            android:name=".BrowseActivity"
+            android:label="@string/BrowseTitle"/>
     </application>
 
 </manifest>

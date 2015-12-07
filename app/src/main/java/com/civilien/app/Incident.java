@@ -6,7 +6,7 @@ package com.civilien.app;
 public class Incident {
 
     String Category, Type, User, PostTitle;
-    int GpsLat, GpsLon;
+    double GpsLat, GpsLon;
 
     public Incident(){}
 
@@ -26,15 +26,15 @@ public class Incident {
         this.PostTitle = value;
     }
 
-    public void setGpsLat(int value){
+    public void setGpsLat(double value){
         this.GpsLat = value;
     }
 
-    public void setGpsLon(int value){
+    public void setGpsLon(double value){
         this.GpsLon = value;
     }
 
-    public Incident (String Cat, String Typ,  String Use, String PoTi, int GpsLt, int GpsLn){
+    public Incident (String Cat, String Typ,  String Use, String PoTi, double GpsLt, double GpsLn){
         setCategory(Cat);
         setType(Typ);
         setUser(Use);
@@ -43,9 +43,7 @@ public class Incident {
         setGpsLon(GpsLn);
 
     }
-
     public String printOut() {
         return this.Category+this.Type+this.User+this.PostTitle+this.GpsLat+this.GpsLon;
     }
 }
-
