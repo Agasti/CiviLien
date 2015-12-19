@@ -3,6 +3,7 @@ package com.civilien.app;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,17 +13,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BrowseActivity extends AppCompatActivity {
 
-    public JSONArray IncidentData;
+    public ArrayList<Incident> IncidentData;
 
     private static final String TAG_IP = "160.177.100.100";
     private static final String TAG_SUCCESS = "success";
@@ -33,13 +38,11 @@ public class BrowseActivity extends AppCompatActivity {
     private static final String TAG_TYPE = "Type";
     private static final String TAG_USER = "User";
     private static final String TAG_TITLE = "Title";
-    private static final String TAG_GPSLAT = "GpsLat";
-    private static final String TAG_GPSLON = "GpsLon";
+    private static final String TAG_GPSLAT = "GPSLat";
+    private static final String TAG_GPSLON = "GPSLon";
     private static final String TAG_RELEVANCE = "Relevance";
 
-    JSONParser jsonParser = new JSONParser();
-    private static String AllIncidentsUrl = "http://160.177.100.100/get_all_incidents.php";
-    //private static String AllIncidentsUrl = "http://"+TAG_IP+"/get_all_incidents.php";
+    private static String AllIncidentsUrl = "http://"+TAG_IP+"/get_all_incidents.php";
     JSONArray IncidentList = null;
 
 
@@ -48,7 +51,7 @@ public class BrowseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
 
-        IncidentData = new JSONArray();
+        IncidentData = new ArrayList<>();
 
         new getIncidentData().execute();
 
@@ -56,6 +59,7 @@ public class BrowseActivity extends AppCompatActivity {
     class getIncidentData extends AsyncTask<Void, Void, Void>{
 
         public ProgressDialog pDialog= new ProgressDialog(BrowseActivity.this);
+        public int success;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -69,17 +73,33 @@ public class BrowseActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... args) {
 
-            List<NameValuePair> parameters = new ArrayList<>();
+            JSONObject json = new JSONObject();
+            try {
+                URL url = new URL(AllIncidentsUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                InputStream InpS = conn.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        InpS, "iso-8859-1"), 8);
 
-            JSONObject json = jsonParser.makeHttpRequest(AllIncidentsUrl, "GET", parameters);
 
-            Toast.makeText(BrowseActivity.this, json.toString(), Toast.LENGTH_LONG).show();
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line + "\n";
+                    sb.append(line);
+                }
+                InpS.close();
+                json = new JSONObject(sb.toString());
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
             // Check log cat for JSON response
-            Log.d("All incidents: ", json.toString());
+            Log.d("JSON DATA", json.toString());
 
             try {
                 // Checking for SUCCESS TAG
-                int success = json.getInt(TAG_SUCCESS);
+                 success = json.getInt(TAG_SUCCESS);
 
                 if (success == 1) {
                     // products found
@@ -89,9 +109,10 @@ public class BrowseActivity extends AppCompatActivity {
                     // looping through All Products
                     for (int i = 0; i < IncidentList.length(); i++) {
                         JSONObject element = IncidentList.getJSONObject(i);
+                        Log.d("INCIDENT", element.toString());
 
                         // Storing each json item in variable
-                        String InID = element.getString(TAG_INCID);
+                        String IncID = element.getString(TAG_INCID);
                         String PostDate = element.getString(TAG_POSTDATE);
                         String Category = element.getString(TAG_CATEGORY);
                         String Type = element.getString(TAG_TYPE);
@@ -101,14 +122,11 @@ public class BrowseActivity extends AppCompatActivity {
                         double GpsLon = element.getDouble(TAG_GPSLON);
                         double Relevance = element.getDouble(TAG_RELEVANCE);
 
-                        Incident incident = new Incident(InID, PostDate,Category, Type, User, Title, GpsLat,GpsLon, Relevance);
+                        Incident incident = new Incident(IncID, PostDate,Category, Type, User, Title, GpsLat,GpsLon, Relevance);
 
-                        // adding HashList to ArrayList
-                        IncidentData.put(incident);
+                        // adding incident element into array
+                        IncidentData.add(incident);
                     }
-                } else {
-                    // no incidents found
-                    Toast.makeText(BrowseActivity.this, "No Incidents!", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -120,13 +138,19 @@ public class BrowseActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            pDialog.dismiss();
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
-                    ArrayAdapter Adapter = new browseAdapter(BrowseActivity.this, IncidentData);
+                    pDialog.dismiss();
+                    if (Looper.myLooper() == null) {
+                        Looper.prepare();
+                    }
+                    if (success == 0) {
+                        Toast.makeText(BrowseActivity.this, "No Incidents!", Toast.LENGTH_LONG).show();
+                    }
+
+                    ArrayAdapter Adapter = new BrowseAdapter(BrowseActivity.this, IncidentData);
                     ListView browseListView = (ListView) findViewById(R.id.browseListView);
                     browseListView.setAdapter(Adapter);
                     browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
