@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
+
+
 public class CreateIncident extends AppCompatActivity {
 
     @Override
@@ -20,8 +23,8 @@ public class CreateIncident extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String Category, Type, User, PostTitle;
-                int GpsLat, GpsLon;
+                String IncID, PostDate,Category, Type, User, PostTitle;
+                double GpsLat, GpsLon, Relevance;
 
                 Category = ((EditText) findViewById(R.id.textBox_Category)).getText().toString();
                 Type = ((EditText) findViewById(R.id.textBox_Type)).getText().toString();
@@ -29,10 +32,18 @@ public class CreateIncident extends AppCompatActivity {
                 User = "Ok";
                 GpsLat = 34;
                 GpsLon = -6;
+                IncID = "1";
+                PostDate = "testdate";
+                Relevance = 1;
 
-                Incident incident = new Incident(Category, Type, User, PostTitle, GpsLat, GpsLon);
+                Incident incident = null;
+                try {
+                    incident = new Incident(IncID, PostDate, Category, Type, User, PostTitle, GpsLat, GpsLon, Relevance);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                Snackbar.make(v, incident.printOut(), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v, incident.toString(), Snackbar.LENGTH_LONG).show();
 
             }
         });

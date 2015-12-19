@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -42,10 +43,10 @@
         </activity>
         <activity
             android:name=".CreateIncident"
-            android:label="@string/CreateIncidentTitle"/>
+            android:label="@string/CreateIncidentTitle" />
         <activity
             android:name=".BrowseActivity"
-            android:label="@string/BrowseTitle"/>
+            android:label="@string/BrowseTitle" />
     </application>
 
 </manifest>
