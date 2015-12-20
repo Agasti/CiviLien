@@ -29,7 +29,7 @@ public class BrowseActivity extends AppCompatActivity {
 
     public ArrayList<Incident> IncidentData;
 
-    private static String AllIncidentsUrl = "http://"+TAGS.IP_ADDRESS +"/get_all_incidents.php";
+    private static String AllIncidentsUrl = "http://"+CONSTANTS.IP_ADDRESS +"/get_all_incidents.php";
     JSONArray IncidentList = null;
 
 

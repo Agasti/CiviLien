@@ -99,7 +99,7 @@ public class CreateIncident extends AppCompatActivity {
 
 
                 // create connection and send request
-                URL url = new URL("http://"+TAGS.IP_ADDRESS +"/create_incident.php");
+                URL url = new URL("http://"+CONSTANTS.IP_ADDRESS +"/create_incident.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
                 conn.setDoInput(true);

@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -23,10 +22,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements LocationListener
         , GoogleApiClient.ConnectionCallbacks
@@ -37,8 +38,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener
     static LocationRequest mLocationRequest;
     LatLng latLng;
 
-    static long UPDATE_INTERVAL = 10 * 1000;
-    static long FASTEST_INTERVAL = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +61,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener
                 startActivity(intent);
             }
         });
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionHandler(MapsActivity.this);
+        }
+
     }
 
 
@@ -78,11 +82,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener
 
         mMap = googleMap;
 
-        permissionHandler(MapsActivity.this);
-
-
-
-
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionHandler(MapsActivity.this);
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     //Handles permission and messages
@@ -90,15 +94,16 @@ public class MapsActivity extends FragmentActivity implements LocationListener
 
     @TargetApi(Build.VERSION_CODES.M)
     public void permissionHandler(Context context) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(MapsActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Toast.makeText(context, "Please grant the app access to location services in \"Settings > APPS > Configure Apps > App Permissions > Location\"", Toast.LENGTH_LONG).show();
                 return;
             }
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RequestCodeAskPermission);
-        } else {
-            mMap.setMyLocationEnabled(true);
         }
     }
 
@@ -109,14 +114,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener
         switch (requestCode) {
             case RequestCodeAskPermission:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RequestCodeAskPermission);
-                        return;
-                    }
-
                     // Permission Granted
-                    mMap.setMyLocationEnabled(true);
                     Toast.makeText(MapsActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Permission Denied
@@ -183,8 +181,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener
         // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
+                .setInterval(CONSTANTS.UPDATE_INTERVAL)
+                .setFastestInterval(CONSTANTS.FASTEST_INTERVAL);
         // Request location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
@@ -216,8 +214,29 @@ public class MapsActivity extends FragmentActivity implements LocationListener
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onLocationChanged(Location location) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    RequestCodeAskPermission);
+            return;
+        }
+        Location mCurrentLocation = LocationServices.FusedLocationApi.
+                getLastLocation(mGoogleApiClient);
+        // Note that this can be NULL if last location isn't already known.
+        if (mCurrentLocation != null) {
+            // Print current location if not null
+            Log.d("current location", mCurrentLocation.toString());
+            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        }
+
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
     }
 }
