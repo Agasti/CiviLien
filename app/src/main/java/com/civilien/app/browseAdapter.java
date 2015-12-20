@@ -8,18 +8,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 /**
  * Created by SehailFillali on 6/12/15.
  */
 class browseAdapter extends ArrayAdapter<Incident> {
-    public browseAdapter(Context context, JSONArray values) {
-        super(context, 0, (List<Incident>) values);
+    public browseAdapter(Context context, ArrayList<Incident> values) {
+        super(context, 0, values);
     }
 
     @Override
@@ -48,22 +47,14 @@ class browseAdapter extends ArrayAdapter<Incident> {
         Holder.InId_view = (TextView) convertView.findViewById(R. id.text_ID);
         Holder.Title_view = (TextView) convertView.findViewById(R. id.text_Title);
         Holder.image_view= (ImageView) convertView.findViewById(R.id.imageView1);
-        //TextView InID_view = (TextView) convertView.findViewById(R.id.text_ID);
+
         try {
             Holder.InId_view.setText(element.getIncID().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //TextView Title_view = (TextView) convertView.findViewById(R.id.text_ID);
-        try {
             Holder.Title_view.setText(element.getTitle().toString());
+            Holder.image_view.setImageResource(R.drawable.icondot);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        //ImageView theImageView = (ImageView) convertView.findViewById(R.id.imageView1);
-        Holder.image_view.setImageResource(R.drawable.icondot);
 
         return convertView;
 

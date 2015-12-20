@@ -29,20 +29,7 @@ public class BrowseActivity extends AppCompatActivity {
 
     public ArrayList<Incident> IncidentData;
 
-    private static final String TAG_IP = "160.177.100.100";
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_INCIDENTS = "incidents";
-    private static final String TAG_INCID = "IncID";
-    private static final String TAG_POSTDATE = "PostDate";
-    private static final String TAG_CATEGORY = "Category";
-    private static final String TAG_TYPE = "Type";
-    private static final String TAG_USER = "User";
-    private static final String TAG_TITLE = "Title";
-    private static final String TAG_GPSLAT = "GPSLat";
-    private static final String TAG_GPSLON = "GPSLon";
-    private static final String TAG_RELEVANCE = "Relevance";
-
-    private static String AllIncidentsUrl = "http://"+TAG_IP+"/get_all_incidents.php";
+    private static String AllIncidentsUrl = "http://"+TAGS.IPADDRESS+"/get_all_incidents.php";
     JSONArray IncidentList = null;
 
 
@@ -74,9 +61,10 @@ public class BrowseActivity extends AppCompatActivity {
         protected Void doInBackground(Void... args) {
 
             JSONObject json = new JSONObject();
+            HttpURLConnection conn = null;
             try {
                 URL url = new URL(AllIncidentsUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url.openConnection();
                 InputStream InpS = conn.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(
                         InpS, "iso-8859-1"), 8);
@@ -92,19 +80,23 @@ public class BrowseActivity extends AppCompatActivity {
                 json = new JSONObject(sb.toString());
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
             }
 
             // Check log cat for JSON response
             Log.d("JSON DATA", json.toString());
 
             try {
-                // Checking for SUCCESS TAG
-                 success = json.getInt(TAG_SUCCESS);
+                // Checking for SUCCESS TAGS
+                 success = json.getInt(TAGS.SUCCESS);
 
                 if (success == 1) {
                     // products found
                     // Getting Array of Products
-                    IncidentList = json.getJSONArray(TAG_INCIDENTS);
+                    IncidentList = json.getJSONArray(TAGS.INCIDENTS);
 
                     // looping through All Products
                     for (int i = 0; i < IncidentList.length(); i++) {
@@ -112,15 +104,15 @@ public class BrowseActivity extends AppCompatActivity {
                         Log.d("INCIDENT", element.toString());
 
                         // Storing each json item in variable
-                        String IncID = element.getString(TAG_INCID);
-                        String PostDate = element.getString(TAG_POSTDATE);
-                        String Category = element.getString(TAG_CATEGORY);
-                        String Type = element.getString(TAG_TYPE);
-                        String User = element.getString(TAG_USER);
-                        String Title = element.getString(TAG_TITLE);
-                        double GpsLat = element.getDouble(TAG_GPSLAT);
-                        double GpsLon = element.getDouble(TAG_GPSLON);
-                        double Relevance = element.getDouble(TAG_RELEVANCE);
+                        String IncID = element.getString(TAGS.INCID);
+                        String PostDate = element.getString(TAGS.POSTDATE);
+                        String Category = element.getString(TAGS.CATEGORY);
+                        String Type = element.getString(TAGS.TYPE);
+                        String User = element.getString(TAGS.USER);
+                        String Title = element.getString(TAGS.TITLE);
+                        String GpsLat = element.getString(TAGS.GPSLAT);
+                        String GpsLon = element.getString(TAGS.GPSLON);
+                        String Relevance = element.getString(TAGS.RELEVANCE);
 
                         Incident incident = new Incident(IncID, PostDate,Category, Type, User, Title, GpsLat,GpsLon, Relevance);
 
@@ -150,7 +142,7 @@ public class BrowseActivity extends AppCompatActivity {
                         Toast.makeText(BrowseActivity.this, "No Incidents!", Toast.LENGTH_LONG).show();
                     }
 
-                    ArrayAdapter Adapter = new BrowseAdapter(BrowseActivity.this, IncidentData);
+                    ArrayAdapter Adapter = new browseAdapter(BrowseActivity.this, IncidentData);
                     ListView browseListView = (ListView) findViewById(R.id.browseListView);
                     browseListView.setAdapter(Adapter);
                     browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

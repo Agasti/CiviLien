@@ -1,16 +1,32 @@
 package com.civilien.app;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Iterator;
 
 
 public class CreateIncident extends AppCompatActivity {
+
+    Incident incident = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,25 +39,23 @@ public class CreateIncident extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String IncID, PostDate,Category, Type, User, PostTitle;
-                double GpsLat, GpsLon, Relevance;
+                String Category, Type, User, Title, GPSLat, GPSLon, Relevance;
 
                 Category = ((EditText) findViewById(R.id.textBox_Category)).getText().toString();
                 Type = ((EditText) findViewById(R.id.textBox_Type)).getText().toString();
-                PostTitle = ((EditText) findViewById(R.id.textBox_Title)).getText().toString();
-                User = "Ok";
-                GpsLat = 34;
-                GpsLon = -6;
-                IncID = "1";
-                PostDate = "testdate";
-                Relevance = 1;
+                Title = ((EditText) findViewById(R.id.textBox_Title)).getText().toString();
+                User = "test";
+                GPSLat = "34";
+                GPSLon = "-6";
+                Relevance = "1";
 
-                Incident incident = null;
                 try {
-                    incident = new Incident(IncID, PostDate, Category, Type, User, PostTitle, GpsLat, GpsLon, Relevance);
+                    incident = new Incident(Category, Type, User, Title, GPSLat, GPSLon, Relevance);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                new sendIncidentData().execute();
 
                 Snackbar.make(v, incident.toString(), Snackbar.LENGTH_LONG).show();
 
@@ -49,6 +63,106 @@ public class CreateIncident extends AppCompatActivity {
         });
     }
 
+    class sendIncidentData extends AsyncTask<Void, Void, Void> {
 
+        public ProgressDialog pDialog= new ProgressDialog(CreateIncident.this);
+        JSONObject response;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pDialog.setMessage("Sending Incident...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... args) {
+
+            JSONObject response = new JSONObject();
+            HttpURLConnection conn = null;
+            try {
+
+                // format incident data into request parameters
+                StringBuilder request_params = new StringBuilder();
+                int i = 0;
+                Iterator<String> keys = incident.keys();
+                while (keys.hasNext()){
+                    String key = keys.next();
+                    if(i != 0){
+                        request_params.append("&");
+                    }
+                    request_params.append(key).append("=").append(URLEncoder.encode((String) incident.get(key), "UTF-8"));
+                    i++;
+                }
+                Log.d("___REQUEST_PARAMS___", request_params.toString());
+
+
+                // create connection and send request
+                URL url = new URL("http://"+TAGS.IPADDRESS+"/create_incident.php");
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
+                conn.setRequestProperty("Content-Length","" + Integer.toString(request_params.toString().getBytes().length));
+                conn.setRequestProperty("Content-Language", "en-US");
+                conn.setUseCaches(false);
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+
+                DataOutputStream writer = new DataOutputStream(conn.getOutputStream());
+                writer.writeBytes(request_params.toString());
+                writer.flush();
+                writer.close();
+
+                conn.connect();
+
+                InputStream InpS = conn.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        InpS, "iso-8859-1"), 8);
+
+
+                String line;
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    line = line + "\n";
+                    sb.append(line);
+                }
+                InpS.close();
+                Log.d("___SB__", sb.toString());
+                if (sb.length() > 0) {
+                    response = new JSONObject(sb.toString());
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+
+            // Check log cat for JSON response
+            Log.d("___RESPONSE___", response.toString());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    pDialog.dismiss();
+                    //Toast.makeText(CreateIncident.this, response.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+
+    }
 
 }
+
+
