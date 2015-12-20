@@ -4,7 +4,7 @@ package com.civilien.app;
  * Created by Sehail Fillali on 19/12/15.
  */
 public class TAGS {
-     static final String IP_ADDRESS = "105.156.216.181";
+     static final String IP_ADDRESS = "160.176.221.236";
      static final String SUCCESS = "success";
      static final String INCIDENTS = "incidents";
      static final String INC_ID = "IncID";
