@@ -29,7 +29,7 @@ public class BrowseActivity extends AppCompatActivity {
 
     public ArrayList<Incident> IncidentData;
 
-    private static String AllIncidentsUrl = "http://"+TAGS.IPADDRESS+"/get_all_incidents.php";
+    private static String AllIncidentsUrl = "http://"+TAGS.IP_ADDRESS +"/get_all_incidents.php";
     JSONArray IncidentList = null;
 
 
@@ -101,17 +101,18 @@ public class BrowseActivity extends AppCompatActivity {
                     // looping through All Products
                     for (int i = 0; i < IncidentList.length(); i++) {
                         JSONObject element = IncidentList.getJSONObject(i);
-                        Log.d("INCIDENT", element.toString());
+//                        check log cat for individual elements
+//                        Log.d("INCIDENT", element.toString());
 
                         // Storing each json item in variable
-                        String IncID = element.getString(TAGS.INCID);
+                        String IncID = element.getString(TAGS.INC_ID);
                         String PostDate = element.getString(TAGS.POSTDATE);
                         String Category = element.getString(TAGS.CATEGORY);
                         String Type = element.getString(TAGS.TYPE);
                         String User = element.getString(TAGS.USER);
                         String Title = element.getString(TAGS.TITLE);
-                        String GpsLat = element.getString(TAGS.GPSLAT);
-                        String GpsLon = element.getString(TAGS.GPSLON);
+                        String GpsLat = element.getString(TAGS.GPS_LAT);
+                        String GpsLon = element.getString(TAGS.GPS_LON);
                         String Relevance = element.getString(TAGS.RELEVANCE);
 
                         Incident incident = new Incident(IncID, PostDate,Category, Type, User, Title, GpsLat,GpsLon, Relevance);

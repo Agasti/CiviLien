@@ -10,25 +10,25 @@ public class Incident extends JSONObject{
 
     public Incident() throws JSONException{}
 
-    public Incident setIncID(String value)throws JSONException{ return (Incident) this.put("IncID" , value);}
-    public Incident setPostDate(String value)throws JSONException{ return (Incident) this.put("PostDate" , value);}
-    public Incident setCategory(String value)throws JSONException{ return (Incident) this.put("Category" , value);}
-    public Incident setType(String value)throws JSONException{ return (Incident) this.put("Type" , value);}
-    public Incident setUser(String value)throws JSONException{ return (Incident) this.put("User" , value);}
-    public Incident setTitle(String value)throws JSONException{ return (Incident) this.put("Title" , value);}
-    public Incident setGPSLat(String value)throws JSONException{ return (Incident) this.put("GPSLat" , value);}
-    public Incident setGPSLon(String value)throws JSONException{ return (Incident) this.put("GPSLon" , value);}
-    public Incident setRelevance(String value)throws JSONException{ return (Incident) this.put("Relevance" , value);}
+    public Incident setIncID(String value)throws JSONException{ return (Incident) this.put(TAGS.INC_ID, value);}
+    public Incident setPostDate(String value)throws JSONException{ return (Incident) this.put(TAGS.POSTDATE, value);}
+    public Incident setCategory(String value)throws JSONException{ return (Incident) this.put(TAGS.CATEGORY, value);}
+    public Incident setType(String value)throws JSONException{ return (Incident) this.put(TAGS.TYPE, value);}
+    public Incident setUser(String value)throws JSONException{ return (Incident) this.put(TAGS.USER, value);}
+    public Incident setTitle(String value)throws JSONException{ return (Incident) this.put(TAGS.TITLE, value);}
+    public Incident setGPSLat(String value)throws JSONException{ return (Incident) this.put(TAGS.GPS_LAT, value);}
+    public Incident setGPSLon(String value)throws JSONException{ return (Incident) this.put(TAGS.GPS_LON, value);}
+    public Incident setRelevance(String value)throws JSONException{ return (Incident) this.put(TAGS.RELEVANCE, value);}
 
-    public Object getIncID()throws JSONException{ return this.getString("IncID");}
-    public Object getPostDate()throws JSONException{ return this.getString("PostDate");}
-    public Object getCategory()throws JSONException{ return this.getString("Category");}
-    public Object getType()throws JSONException{ return this.getString("Type");}
-    public Object getUser()throws JSONException{ return this.getString("User");}
-    public Object getTitle()throws JSONException{ return this.getString("Title");}
-    public Object getGPSLat()throws JSONException{ return this.getDouble("GPSLat");}
-    public Object getGPSLon()throws JSONException{ return super.getDouble("GPSLon");}
-    public Object getRelevance()throws JSONException{ return super.getDouble("Relevance");}
+    public Object getIncID()throws JSONException{ return this.getString(TAGS.INC_ID);}
+    public Object getPostDate()throws JSONException{ return this.getString(TAGS.POSTDATE);}
+    public Object getCategory()throws JSONException{ return this.getString(TAGS.CATEGORY);}
+    public Object getType()throws JSONException{ return this.getString(TAGS.TYPE);}
+    public Object getUser()throws JSONException{ return this.getString(TAGS.USER);}
+    public Object getTitle()throws JSONException{ return this.getString(TAGS.TITLE);}
+    public Object getGPSLat()throws JSONException{ return this.getString(TAGS.GPS_LAT);}
+    public Object getGPSLon()throws JSONException{ return super.getString(TAGS.GPS_LON);}
+    public Object getRelevance()throws JSONException{ return super.getString(TAGS.RELEVANCE);}
 
     public Incident (String IncID, String PostDate, String Category, String Type,  String User, String Title, String GPSLat, String GPSLon, String Relevance)
     throws JSONException {

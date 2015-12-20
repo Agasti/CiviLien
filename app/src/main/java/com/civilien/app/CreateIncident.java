@@ -3,12 +3,12 @@ package com.civilien.app;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +27,7 @@ import java.util.Iterator;
 public class CreateIncident extends AppCompatActivity {
 
     Incident incident = null;
+    int Success = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +58,13 @@ public class CreateIncident extends AppCompatActivity {
 
                 new sendIncidentData().execute();
 
-                Snackbar.make(v, incident.toString(), Snackbar.LENGTH_LONG).show();
-
             }
         });
     }
 
-    class sendIncidentData extends AsyncTask<Void, Void, Void> {
+    class sendIncidentData extends AsyncTask<Void, Void, JSONObject> {
 
         public ProgressDialog pDialog= new ProgressDialog(CreateIncident.this);
-        JSONObject response;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -78,8 +76,7 @@ public class CreateIncident extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... args) {
-
+        protected JSONObject doInBackground(Void... args) {
             JSONObject response = new JSONObject();
             HttpURLConnection conn = null;
             try {
@@ -96,11 +93,13 @@ public class CreateIncident extends AppCompatActivity {
                     request_params.append(key).append("=").append(URLEncoder.encode((String) incident.get(key), "UTF-8"));
                     i++;
                 }
+                // Check log cat for request parameters
+                Log.d("*", getString(R.string.LogCatBreak));
                 Log.d("___REQUEST_PARAMS___", request_params.toString());
 
 
                 // create connection and send request
-                URL url = new URL("http://"+TAGS.IPADDRESS+"/create_incident.php");
+                URL url = new URL("http://"+TAGS.IP_ADDRESS +"/create_incident.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
@@ -131,7 +130,8 @@ public class CreateIncident extends AppCompatActivity {
                     sb.append(line);
                 }
                 InpS.close();
-                Log.d("___SB__", sb.toString());
+                // Check log cat for built string
+                Log.d("___RESPONSE STRING___", sb.toString());
                 if (sb.length() > 0) {
                     response = new JSONObject(sb.toString());
                 }
@@ -144,18 +144,28 @@ public class CreateIncident extends AppCompatActivity {
             }
 
             // Check log cat for JSON response
-            Log.d("___RESPONSE___", response.toString());
-            return null;
+//            Log.d("___RESPONSE___", response.toString());
+            return response;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(final JSONObject response) {
+            super.onPostExecute(response);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     pDialog.dismiss();
-                    //Toast.makeText(CreateIncident.this, response.toString(), Toast.LENGTH_LONG).show();
+
+                    try {
+                        Success = Integer.parseInt(response.get(TAGS.SUCCESS).toString());
+                        Toast.makeText(CreateIncident.this, response.get("Message").toString(), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (Success == 1) {
+                        finish();
+                    }
                 }
             });
         }
