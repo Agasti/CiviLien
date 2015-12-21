@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -29,15 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements LocationListener
+public class MapsActivity extends BaseActivity implements LocationListener
         , GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
-    LatLng latLng;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,17 +124,21 @@ public class MapsActivity extends FragmentActivity implements LocationListener
     }
 
 
+    @Override
     protected void onStart() {
         super.onStart();
         // Connect the client.
         mGoogleApiClient.connect();
     }
 
+    @Override
     protected void onStop() {
         // Disconnecting the client invalidates it.
 
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
         super.onStop();
     }
 
@@ -159,7 +160,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener
         if (mCurrentLocation != null) {
             // Print current location if not null
             Log.d("current location", mCurrentLocation.toString());
-            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            myLatLng= new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         }
         // Begin polling for new location updates.
         startLocationUpdates();
@@ -226,17 +227,18 @@ public class MapsActivity extends FragmentActivity implements LocationListener
                     RequestCodeAskPermission);
             return;
         }
-        Location mCurrentLocation = LocationServices.FusedLocationApi.
+        Location myCurrentLocation = LocationServices.FusedLocationApi.
                 getLastLocation(mGoogleApiClient);
         // Note that this can be NULL if last location isn't already known.
-        if (mCurrentLocation != null) {
+        if (myCurrentLocation != null) {
             // Print current location if not null
-            Log.d("current location", mCurrentLocation.toString());
-            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            Log.d("current location", myCurrentLocation.toString());
+            Log.d("current location", myCurrentLocation.getProvider().toString());
+            myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
 
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
 
     }
 }

@@ -3,7 +3,6 @@ package com.civilien.app;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 
 
-public class CreateIncident extends AppCompatActivity {
+public class CreateIncident extends BaseActivity {
 
     Incident incident = null;
     int Success = 0;
@@ -45,7 +44,7 @@ public class CreateIncident extends AppCompatActivity {
                 Category = ((EditText) findViewById(R.id.textBox_Category)).getText().toString();
                 Type = ((EditText) findViewById(R.id.textBox_Type)).getText().toString();
                 Title = ((EditText) findViewById(R.id.textBox_Title)).getText().toString();
-                User = "test";
+                User = CONSTANTS.USERNAME;
                 GPSLat = "34";
                 GPSLon = "-6";
                 Relevance = "1";

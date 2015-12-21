@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
         CreateIncident_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CreateIncident.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, CreateIncident.class));
             }
         });
 
@@ -39,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
         });
 
@@ -48,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
         browse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, BrowseActivity.class));
             }
         });
     }

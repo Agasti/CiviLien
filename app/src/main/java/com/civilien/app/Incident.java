@@ -3,10 +3,12 @@ package com.civilien.app;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by Sehail Fillali on 5/12/15.
  */
-public class Incident extends JSONObject{
+public class Incident extends JSONObject implements Serializable{
 
     public Incident() throws JSONException{}
 
