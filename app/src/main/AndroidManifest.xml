@@ -53,7 +53,9 @@
             android:name=".BrowseActivity"
             android:label="@string/BrowseTitle" />
         <activity android:name=".BaseActivity" />
-
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"></activity>
     </application>
 
 </manifest>
