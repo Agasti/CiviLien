@@ -2,7 +2,6 @@ package com.civilien.app;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -37,6 +36,7 @@ public class MapsActivity extends BaseActivity implements LocationListener
         , GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
+    private static final Boolean SHOW_DIALOG = true;
     private GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
@@ -90,35 +90,13 @@ public class MapsActivity extends BaseActivity implements LocationListener
         }
         mMap.setMyLocationEnabled(true);
 
-        if (IncidentData.isEmpty()) {
-
-            getIncidentData.TaskListener listener = new getIncidentData.TaskListener() {
-
-                private ProgressDialog pDialog = new ProgressDialog(MapsActivity.this);
-
-                @Override
-                public void onStarted() {
-                    pDialog.setMessage("Getting Incidents..");
-                    pDialog.setIndeterminate(false);
-                    pDialog.setCancelable(true);
-                    pDialog.show();
-                }
-
-                @Override
-                public void onFinished() {
-                    pDialog.dismiss();
-
-                    addIncidentMarkers();
-                }
-            };
-            new getIncidentData(listener).execute();
-        } else {
-            addIncidentMarkers();
-        }
+        downloadIncidentData(SHOW_DIALOG);
 
     }
 
-    private void addIncidentMarkers() {
+    @Override
+    public void useIncidentData() {
+        // Add markers for each incident
 
         JSONArray array = null;
         try {
@@ -131,8 +109,16 @@ public class MapsActivity extends BaseActivity implements LocationListener
         double lat = 0;
         double lon = 0;
         String MarkerTitle = null;
-        LatLng[] IncidentPosition = new LatLng[array.length()];
-        for (int i = 0;  i < array.length(); i++) {
+        int length;
+        if (array != null) {
+            length = array.length();
+        } else{
+            Log.d("_DATA ERROR_", "JSONArray array(IncidentData) is empty!");
+            length = 0;
+        }
+        LatLng[] IncidentPosition = new LatLng[length];
+
+        for (int i = 0;  i < length; i++) {
 
             try {
                 lat = Double.parseDouble(array.getJSONObject(i).getString(TAGS.GPS_LAT));
@@ -144,10 +130,11 @@ public class MapsActivity extends BaseActivity implements LocationListener
             lat = lat + ((double) r.nextInt(100) / 10000);
             lon = lon + ((double) r.nextInt(100) / 10000);
             IncidentPosition[i] = new LatLng(lat, lon);
-            Log.d("NEXT LATLON", Double.toString(lat) + " - " + Double.toString(lon));
+            Log.d("NEXT LAT_LON", Double.toString(lat) + " - " + Double.toString(lon));
             mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
-            Log.d("___MARKER i" + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
+            Log.d("___MARKER " + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
         }
+
 
     }
 
@@ -300,8 +287,6 @@ public class MapsActivity extends BaseActivity implements LocationListener
             Log.d("current location", myCurrentLocation.toString());
             myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
-
-        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
 
     }
 }
