@@ -47,7 +47,7 @@ public class Incident extends JSONObject implements Serializable{
         this.setRelevance(Relevance);
     }
 
-    public Incident (String Category, String Type,  String User, String Title, String GPSLat, String GPSLon, String Relevance)
+    public Incident (String Category, String Type,  String User, String Title, String GPSLat, String GPSLon)
             throws JSONException {
         this.setCategory(Category);
         this.setType(Type);
@@ -55,7 +55,6 @@ public class Incident extends JSONObject implements Serializable{
         this.setTitle(Title);
         this.setGPSLat(GPSLat);
         this.setGPSLon(GPSLon);
-        this.setRelevance(Relevance);
     }
 
     public Incident (JSONObject jsonObject)

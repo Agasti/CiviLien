@@ -141,7 +141,7 @@ public class MapsActivity extends BaseActivity implements LocationListener
 
                     Log.d("___MARKER CLICK____", marker.getId() + "  " + marker.getTitle());
                     Intent checkIncident = new Intent(MapsActivity.this, viewIncidentsActivity.class);
-                    checkIncident.putExtra(TAGS.INC_ID, marker.getId().substring(1));
+                    checkIncident.putExtra("position", marker.getId().substring(1));
                     startActivity(checkIncident);
                     return true;
                 }

@@ -45,12 +45,11 @@ public class CreateIncident extends BaseActivity {
                 Type = ((EditText) findViewById(R.id.textBox_Type)).getText().toString();
                 Title = ((EditText) findViewById(R.id.textBox_Title)).getText().toString();
                 User = CONSTANTS.USERNAME;
-                GPSLat = "34";
-                GPSLon = "-6";
-                Relevance = "1";
+                GPSLat = Double.toString(myLatLng.latitude);
+                GPSLon = Double.toString(myLatLng.longitude);
 
                 try {
-                    incident = new Incident(Category, Type, User, Title, GPSLat, GPSLon, Relevance);
+                    incident = new Incident(Category, Type, User, Title, GPSLat, GPSLon);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -21,7 +21,7 @@ public class BaseActivity extends AppCompatActivity {
 
     static LatLng myLatLng;
     static ArrayList IncidentArray = new ArrayList();
-    static IncidentList IncidentData;
+    static JSONArray IncidentData;
 
     public void downloadIncidentData(Boolean showDialog) {
 
@@ -70,9 +70,6 @@ public class BaseActivity extends AppCompatActivity {
                 checkIncident.putExtra("position", Integer.toString(position));
 
                 startActivity(checkIncident);
-
-//                String selection = "You've selected " + String.valueOf(parent.getItemAtPosition(position));
-//                Snackbar.make(view, selection, Snackbar.LENGTH_LONG).show();
             }
         });
         return null;
@@ -107,7 +104,7 @@ public class BaseActivity extends AppCompatActivity {
             HttpJSONRequest request = new HttpJSONRequest();
             JSONObject json = request.makeJSONRequest(CONSTANTS.URL_GET_INCIDENTS);
 
-            JSONArray IncidentList = null;
+            JSONArray Incident_List = null;
             try {
                 // Checking for SUCCESS TAGS
                 success = json.getInt(TAGS.SUCCESS);
@@ -115,28 +112,37 @@ public class BaseActivity extends AppCompatActivity {
                 if (success == 1) {
                     // products found
                     // Getting Array of Products
-                    IncidentList = json.getJSONArray(TAGS.INCIDENTS);
+                    Incident_List = json.getJSONArray(TAGS.INCIDENTS);
 
                     // looping through All Products
-                    for (int i = 0; i < IncidentList.length(); i++) {
+                    for (int i = 0; i < Incident_List.length(); i++) {
 //                        check log cat for individual elements
-//                        Log.d("INCIDENT "+Integer.toString(i), IncidentList.getJSONObject(i).toString());
+//                        Log.d("INCIDENT "+Integer.toString(i), Incident_List.getJSONObject(i).toString());
 
                         // adding incident element into array
-                        IncidentArray.add(new Incident(IncidentList.getJSONObject(i)));
+                        IncidentArray.add(new Incident(Incident_List.getJSONObject(i)));
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            IncidentData = new IncidentList(IncidentArray);
+            IncidentData = new JSONArray(IncidentArray);
 
             return null;
         }
 
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+//            JSONObject helper;
+//            for (JSONObject e : IncidentData) {
+//
+//                helper = new JSONObject(e);
+//                ArrayList<String> ID_Array =
+//
+//            }
+
 
             if (this.taskListener != null){
                 this.taskListener.onFinished();

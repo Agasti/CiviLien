@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class viewIncidentsActivity extends BaseActivity {
@@ -41,7 +41,7 @@ public class viewIncidentsActivity extends BaseActivity {
 
         Intent callerIntent = getIntent();
         int position = Integer.parseInt(callerIntent.getStringExtra("position"));
-        Log.d("ViewIncident_position", Integer.toString(position));
+//        Log.d("ViewIncident_position", Integer.toString(position));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -149,7 +149,7 @@ public class viewIncidentsActivity extends BaseActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            IncidentList myList = new IncidentList(IncidentArray);
+            JSONArray myList = new JSONArray(IncidentArray);
             try {
                 return myList.getJSONObject(position).getString(TAGS.INC_ID);
             } catch (JSONException e) {
