@@ -2,6 +2,7 @@ package com.civilien.app;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -21,12 +22,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.Random;
 
 public class MapsActivity extends BaseActivity implements LocationListener
         , GoogleApiClient.ConnectionCallbacks
@@ -84,6 +89,66 @@ public class MapsActivity extends BaseActivity implements LocationListener
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+        if (IncidentData.isEmpty()) {
+
+            getIncidentData.TaskListener listener = new getIncidentData.TaskListener() {
+
+                private ProgressDialog pDialog = new ProgressDialog(MapsActivity.this);
+
+                @Override
+                public void onStarted() {
+                    pDialog.setMessage("Getting Incidents..");
+                    pDialog.setIndeterminate(false);
+                    pDialog.setCancelable(true);
+                    pDialog.show();
+                }
+
+                @Override
+                public void onFinished() {
+                    pDialog.dismiss();
+
+                    addIncidentMarkers();
+                }
+            };
+            new getIncidentData(listener).execute();
+        } else {
+            addIncidentMarkers();
+        }
+
+    }
+
+    private void addIncidentMarkers() {
+
+        JSONArray array = null;
+        try {
+            array = new JSONArray(IncidentData.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Random r = new Random();
+        double lat = 0;
+        double lon = 0;
+        String MarkerTitle = null;
+        LatLng[] IncidentPosition = new LatLng[array.length()];
+        for (int i = 0;  i < array.length(); i++) {
+
+            try {
+                lat = Double.parseDouble(array.getJSONObject(i).getString(TAGS.GPS_LAT));
+                lon = Double.parseDouble(array.getJSONObject(i).getString(TAGS.GPS_LON));
+                MarkerTitle = array.getJSONObject(i).get(TAGS.INC_ID).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            lat = lat + ((double) r.nextInt(100) / 10000);
+            lon = lon + ((double) r.nextInt(100) / 10000);
+            IncidentPosition[i] = new LatLng(lat, lon);
+            Log.d("NEXT LATLON", Double.toString(lat) + " - " + Double.toString(lon));
+            mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
+            Log.d("___MARKER i" + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
+        }
+
     }
 
     //Handles permission and messages
@@ -233,12 +298,10 @@ public class MapsActivity extends BaseActivity implements LocationListener
         if (myCurrentLocation != null) {
             // Print current location if not null
             Log.d("current location", myCurrentLocation.toString());
-            Log.d("current location", myCurrentLocation.getProvider().toString());
             myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
 
         mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
 
     }
 }
