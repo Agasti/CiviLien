@@ -16,6 +16,7 @@ public class TAGS {
      static final String GPS_LON = "GPSLon";
      static final String RELEVANCE = "Relevance";
 
+
      public TAGS() {
      }
 

@@ -98,7 +98,7 @@ public class CreateIncident extends BaseActivity {
 
 
                 // create connection and send request
-                URL url = new URL("http://"+CONSTANTS.IP_ADDRESS +"/create_incident.php");
+                URL url = new URL(CONSTANTS.URL_CREATE_INCIDENT);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
                 conn.setDoInput(true);

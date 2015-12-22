@@ -3,10 +3,7 @@ package com.civilien.app;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,20 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
+public class BrowseActivity extends BaseActivity {
 
-public class BrowseActivity extends AppCompatActivity {
-
-    public ArrayList<Incident> IncidentData;
-
-    private static String AllIncidentsUrl = "http://"+CONSTANTS.IP_ADDRESS +"/get_all_incidents.php";
-    JSONArray IncidentList = null;
 
 
     @Override
@@ -38,9 +23,11 @@ public class BrowseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
 
-        IncidentData = new ArrayList<>();
+//        IncidentData = new ArrayList<>();
 
-        new getIncidentData().execute();
+        if (IncidentData.isEmpty()) {
+            new getIncidentData().execute();
+        }
 
     }
     class getIncidentData extends AsyncTask<Void, Void, Void>{
@@ -60,35 +47,10 @@ public class BrowseActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... args) {
 
-            JSONObject json = new JSONObject();
-            HttpURLConnection conn = null;
-            try {
-                URL url = new URL(AllIncidentsUrl);
-                conn = (HttpURLConnection) url.openConnection();
-                InputStream InpS = conn.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        InpS, "iso-8859-1"), 8);
+            HttpJSONRequest request = new HttpJSONRequest();
+            JSONObject json = request.makeJSONRequest(CONSTANTS.URL_GET_INCIDENTS);
 
-
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    line = line + "\n";
-                    sb.append(line);
-                }
-                InpS.close();
-                json = new JSONObject(sb.toString());
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
-            }
-
-            // Check log cat for JSON response
-            Log.d("JSON DATA", json.toString());
-
+            JSONArray IncidentList = null;
             try {
                 // Checking for SUCCESS TAGS
                  success = json.getInt(TAGS.SUCCESS);
@@ -122,9 +84,6 @@ public class BrowseActivity extends AppCompatActivity {
                 public void run() {
 
                     pDialog.dismiss();
-                    if (Looper.myLooper() == null) {
-                        Looper.prepare();
-                    }
                     if (success == 0) {
                         Toast.makeText(BrowseActivity.this, "No Incidents!", Toast.LENGTH_LONG).show();
                     }
