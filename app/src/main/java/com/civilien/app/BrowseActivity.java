@@ -1,10 +1,10 @@
 package com.civilien.app;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 
 public class BrowseActivity extends BaseActivity {
 
+    Boolean SHOW_DIALOG = true;
 
 
     @Override
@@ -12,34 +12,15 @@ public class BrowseActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
-
-        if (IncidentData.isEmpty()) {
-
-            getIncidentData.TaskListener listener = new getIncidentData.TaskListener() {
-
-                private ProgressDialog pDialog = new ProgressDialog(BrowseActivity.this);
-
-                @Override
-                public void onStarted() {
-                    pDialog.setMessage("Getting Incidents..");
-                    pDialog.setIndeterminate(false);
-                    pDialog.setCancelable(true);
-                    pDialog.show();
-                }
-
-                @Override
-                public void onFinished() {
-                    pDialog.dismiss();
-
-                    createAdapterList();
-                }
-            };
-            new getIncidentData(listener).execute();
-        } else {
-            createAdapterList();
-        }
+        downloadIncidentData(SHOW_DIALOG);
     }
 
 
+    @Override
+    public void useIncidentData() {
+
+        createAdapterList(R.id.browseListView,R.layout.browse_row);
+
+    }
 }
 

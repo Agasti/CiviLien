@@ -1,5 +1,6 @@
 package com.civilien.app;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,11 +23,45 @@ public class BaseActivity extends AppCompatActivity {
     static ArrayList<Incident> IncidentData = new ArrayList<>();
 
 
+    public void downloadIncidentData(Boolean showDialog) {
 
-    public Void createAdapterList (){
+        if (IncidentData.isEmpty()) {
 
-        ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, IncidentData);
-        ListView browseListView = (ListView) findViewById(R.id.browseListView);
+            getIncidentData.TaskListener listener = null;
+            if(showDialog) {
+                listener = new getIncidentData.TaskListener() {
+
+                    private ProgressDialog pDialog = new ProgressDialog(BaseActivity.this);
+
+                    @Override
+                    public void onStarted() {
+                        pDialog.setMessage("Getting Incidents..");
+                        pDialog.setIndeterminate(false);
+                        pDialog.setCancelable(true);
+                        pDialog.show();
+                    }
+
+                    @Override
+                    public void onFinished() {
+                        pDialog.dismiss();
+
+                        useIncidentData();
+                    }
+                };
+            }
+            new getIncidentData(listener).execute();
+        } else {
+            useIncidentData();
+        }
+    }
+
+    public void useIncidentData() {}
+
+
+    public Void createAdapterList (int listView,int Layout){
+
+        ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, Layout, IncidentData);
+        ListView browseListView = (ListView) findViewById(listView);
         browseListView.setAdapter(Adapter);
         browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -104,23 +139,6 @@ public class BaseActivity extends AppCompatActivity {
 /*            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                    pDialog.dismiss();
-                    if (success == 0) {
-                        Toast.makeText(BaseActivity.this, "No Incidents!", Toast.LENGTH_LONG).show();
-                    }
-
-                    ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, IncidentData);
-                    ListView browseListView = (ListView) findViewById(R.id.browseListView);
-                    browseListView.setAdapter(Adapter);
-                    browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                            String selection = "You've selected " + String.valueOf(parent.getItemAtPosition(position));
-                            Snackbar.make(view, selection, Snackbar.LENGTH_LONG).show();
-                        }
-                    });
                 }
             });*/
         }

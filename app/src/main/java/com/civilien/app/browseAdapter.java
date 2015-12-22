@@ -17,8 +17,10 @@ import java.util.ArrayList;
  * Created by SehailFillali on 6/12/15.
  */
 class browseAdapter extends ArrayAdapter<Incident> {
-    public browseAdapter(Context context, ArrayList<Incident> values) {
+    int customLayout;
+    public browseAdapter(Context context,int myLayout, ArrayList<Incident> values) {
         super(context, 0, values);
+        this.customLayout = myLayout;
     }
 
     @Override
@@ -35,7 +37,7 @@ class browseAdapter extends ArrayAdapter<Incident> {
             Holder = new ViewHolder();
             Context context = getContext();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.browse_row, parent, false);
+            convertView = inflater.inflate(customLayout, parent, false);
             convertView.setTag(Holder);
         }
         else {

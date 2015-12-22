@@ -1,9 +1,11 @@
 package com.civilien.app;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * Created by Sehail Fillali on 5/12/15.
@@ -67,6 +69,31 @@ public class Incident extends JSONObject implements Serializable{
         this.setGPSLat(jsonObject.getString(TAGS.GPS_LAT));
         this.setGPSLon(jsonObject.getString(TAGS.GPS_LON));
         this.setRelevance(jsonObject.getString(TAGS.RELEVANCE));
+    }
+
+    @Override
+    public Iterator<String> keys() {
+        return super.keys();
+    }
+
+    @Override
+    public JSONArray names() {
+        return super.names();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
+    public String toString(int indentSpaces) throws JSONException {
+        return super.toString(indentSpaces);
+    }
+
+    @Override
+    public int length() {
+        return super.length();
     }
 }
 
