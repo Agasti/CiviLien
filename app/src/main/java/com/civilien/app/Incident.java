@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class Incident extends JSONObject implements Serializable{
 
-    public Incident() throws JSONException{}
+    public Incident() throws JSONException {}
 
     public Incident setIncID(String value)throws JSONException{ return (Incident) this.put(TAGS.INC_ID, value);}
     public Incident setPostDate(String value)throws JSONException{ return (Incident) this.put(TAGS.POSTDATE, value);}
@@ -56,5 +56,17 @@ public class Incident extends JSONObject implements Serializable{
         this.setRelevance(Relevance);
     }
 
+    public Incident (JSONObject jsonObject)
+            throws JSONException {
+        this.setIncID(jsonObject.getString(TAGS.INC_ID));
+        this.setPostDate(jsonObject.getString(TAGS.POSTDATE));
+        this.setCategory(jsonObject.getString(TAGS.CATEGORY));
+        this.setType(jsonObject.getString(TAGS.TYPE));
+        this.setUser(jsonObject.getString(TAGS.USER));
+        this.setTitle(jsonObject.getString(TAGS.TITLE));
+        this.setGPSLat(jsonObject.getString(TAGS.GPS_LAT));
+        this.setGPSLon(jsonObject.getString(TAGS.GPS_LON));
+        this.setRelevance(jsonObject.getString(TAGS.RELEVANCE));
+    }
 }
 

@@ -100,25 +100,11 @@ public class BrowseActivity extends AppCompatActivity {
 
                     // looping through All Products
                     for (int i = 0; i < IncidentList.length(); i++) {
-                        JSONObject element = IncidentList.getJSONObject(i);
 //                        check log cat for individual elements
-//                        Log.d("INCIDENT", element.toString());
-
-                        // Storing each json item in variable
-                        String IncID = element.getString(TAGS.INC_ID);
-                        String PostDate = element.getString(TAGS.POSTDATE);
-                        String Category = element.getString(TAGS.CATEGORY);
-                        String Type = element.getString(TAGS.TYPE);
-                        String User = element.getString(TAGS.USER);
-                        String Title = element.getString(TAGS.TITLE);
-                        String GpsLat = element.getString(TAGS.GPS_LAT);
-                        String GpsLon = element.getString(TAGS.GPS_LON);
-                        String Relevance = element.getString(TAGS.RELEVANCE);
-
-                        Incident incident = new Incident(IncID, PostDate,Category, Type, User, Title, GpsLat,GpsLon, Relevance);
+//                        Log.d("INCIDENT "+Integer.toString(i), IncidentList.getJSONObject(i).toString());
 
                         // adding incident element into array
-                        IncidentData.add(incident);
+                        IncidentData.add(new Incident(IncidentList.getJSONObject(i)));
                     }
                 }
             } catch (JSONException e) {
