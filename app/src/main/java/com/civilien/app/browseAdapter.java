@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 class browseAdapter extends ArrayAdapter<Incident> {
     int customLayout;
-    public browseAdapter(Context context,int myLayout, ArrayList<Incident> values) {
+    public browseAdapter(Context context,int myLayout, ArrayList values) {
         super(context, 0, values);
         this.customLayout = myLayout;
     }

@@ -1,8 +1,8 @@
 package com.civilien.app;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 public class BaseActivity extends AppCompatActivity {
 
     static LatLng myLatLng;
-    static ArrayList<Incident> IncidentData = new ArrayList<>();
-
+    static ArrayList IncidentArray = new ArrayList();
+    static IncidentList IncidentData;
 
     public void downloadIncidentData(Boolean showDialog) {
 
-        if (IncidentData.isEmpty()) {
+        if (IncidentArray.isEmpty()) {
 
             getIncidentData.TaskListener listener = null;
             if(showDialog) {
@@ -37,7 +37,6 @@ public class BaseActivity extends AppCompatActivity {
                     public void onStarted() {
                         pDialog.setMessage("Getting Incidents..");
                         pDialog.setIndeterminate(false);
-                        pDialog.setCancelable(true);
                         pDialog.show();
                     }
 
@@ -60,15 +59,20 @@ public class BaseActivity extends AppCompatActivity {
 
     public Void createAdapterList (int listView,int Layout){
 
-        ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, Layout, IncidentData);
+        ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, Layout, IncidentArray);
         ListView browseListView = (ListView) findViewById(listView);
         browseListView.setAdapter(Adapter);
         browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String selection = "You've selected " + String.valueOf(parent.getItemAtPosition(position));
-                Snackbar.make(view, selection, Snackbar.LENGTH_LONG).show();
+                Intent checkIncident = new Intent(BaseActivity.this, viewIncidentsActivity.class);
+                checkIncident.putExtra("position", Integer.toString(position));
+
+                startActivity(checkIncident);
+
+//                String selection = "You've selected " + String.valueOf(parent.getItemAtPosition(position));
+//                Snackbar.make(view, selection, Snackbar.LENGTH_LONG).show();
             }
         });
         return null;
@@ -119,12 +123,14 @@ public class BaseActivity extends AppCompatActivity {
 //                        Log.d("INCIDENT "+Integer.toString(i), IncidentList.getJSONObject(i).toString());
 
                         // adding incident element into array
-                        IncidentData.add(new Incident(IncidentList.getJSONObject(i)));
+                        IncidentArray.add(new Incident(IncidentList.getJSONObject(i)));
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            IncidentData = new IncidentList(IncidentArray);
 
             return null;
         }

@@ -49,10 +49,19 @@ public class HttpJSONRequest {
             }
         }
 
-        // Check log cat for JSON response
-        Log.d("JSON DATA", json.toString());
+        JSONObject jsonObject = json;
+        if (json == null) {
+            try {
+                jsonObject = new JSONObject("{" + TAGS.SUCCESS + ":0,\"message\":\"Failed to retrieve data\"}");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
-        return json;
+        // Check log cat for JSON response
+        Log.d("JSON DATA", jsonObject.toString());
+
+        return jsonObject;
     }
 
 

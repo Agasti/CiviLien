@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -100,7 +101,7 @@ public class MapsActivity extends BaseActivity implements LocationListener
 
         JSONArray array = null;
         try {
-            array = new JSONArray(IncidentData.toString());
+            array = new JSONArray(IncidentArray.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -113,7 +114,7 @@ public class MapsActivity extends BaseActivity implements LocationListener
         if (array != null) {
             length = array.length();
         } else{
-            Log.d("_DATA ERROR_", "JSONArray array(IncidentData) is empty!");
+            Log.d("_DATA ERROR_", "JSONArray array(IncidentArray) is empty!");
             length = 0;
         }
         LatLng[] IncidentPosition = new LatLng[length];
@@ -130,9 +131,22 @@ public class MapsActivity extends BaseActivity implements LocationListener
             lat = lat + ((double) r.nextInt(100) / 10000);
             lon = lon + ((double) r.nextInt(100) / 10000);
             IncidentPosition[i] = new LatLng(lat, lon);
-            Log.d("NEXT LAT_LON", Double.toString(lat) + " - " + Double.toString(lon));
+//            Log.d("NEXT LAT_LON", Double.toString(lat) + " - " + Double.toString(lon));
             mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
             Log.d("___MARKER " + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+
+                    Log.d("___MARKER CLICK____", marker.getId() + "  " + marker.getTitle());
+                    Intent checkIncident = new Intent(MapsActivity.this, viewIncidentsActivity.class);
+                    checkIncident.putExtra(TAGS.INC_ID, marker.getId().substring(1));
+                    startActivity(checkIncident);
+                    return true;
+                }
+            });
+
         }
 
 
