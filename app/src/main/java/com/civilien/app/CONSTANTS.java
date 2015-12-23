@@ -8,7 +8,7 @@ public class CONSTANTS {
     static long UPDATE_INTERVAL = 10 * 1000; // 10 Seconds
     static long FASTEST_INTERVAL = 2000; // 2 Seconds
 
-    static final String IP_ADDRESS = "160.177.100.39";
+    static final String IP_ADDRESS = "105.157.6.222";
     static final String USERNAME = "test";
 
 
