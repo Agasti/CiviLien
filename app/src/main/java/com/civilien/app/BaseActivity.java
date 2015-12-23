@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -135,14 +139,44 @@ public class BaseActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-//            JSONObject helper;
-//            for (JSONObject e : IncidentData) {
-//
-//                helper = new JSONObject(e);
-//                ArrayList<String> ID_Array =
-//
-//            }
+            List<JSONObject> jsonList = new ArrayList<JSONObject>();
 
+            int length = IncidentData.length();
+            for (int i = 0; i < length; i++) {
+                try {
+                    jsonList.add(IncidentData.getJSONObject(i));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Collections.sort(jsonList, new Comparator<JSONObject>() {
+                @Override
+                public int compare(JSONObject lhs, JSONObject rhs) {
+                    Integer A = 0, B = 0;
+
+                    try {
+                        A = lhs.getInt(TAGS.VOTES);
+                        B = rhs.getInt(TAGS.VOTES);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return B.compareTo(A);
+                }
+            });
+
+            IncidentData = new JSONArray();
+            IncidentArray = new ArrayList();
+            for (int i = 0; i < length; i++) {
+                IncidentData.put(jsonList.get(i));
+                try {
+                    IncidentArray.add(new Incident(new JSONObject(jsonList.get(i).toString())));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d("Sorted Data", IncidentData.toString());
 
             if (this.taskListener != null){
                 this.taskListener.onFinished();

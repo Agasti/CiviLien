@@ -23,6 +23,7 @@ public class Incident extends JSONObject implements Serializable{
     public Incident setGPSLat(String value)throws JSONException{ return (Incident) this.put(TAGS.GPS_LAT, value);}
     public Incident setGPSLon(String value)throws JSONException{ return (Incident) this.put(TAGS.GPS_LON, value);}
     public Incident setRelevance(String value)throws JSONException{ return (Incident) this.put(TAGS.RELEVANCE, value);}
+    public Incident setVotes(String value)throws JSONException{ return (Incident) this.put(TAGS.VOTES, value);}
 
     public Object getIncID()throws JSONException{ return this.getString(TAGS.INC_ID);}
     public Object getPostDate()throws JSONException{ return this.getString(TAGS.POSTDATE);}
@@ -33,8 +34,11 @@ public class Incident extends JSONObject implements Serializable{
     public Object getGPSLat()throws JSONException{ return this.getString(TAGS.GPS_LAT);}
     public Object getGPSLon()throws JSONException{ return super.getString(TAGS.GPS_LON);}
     public Object getRelevance()throws JSONException{ return super.getString(TAGS.RELEVANCE);}
+    public Object getVotes()throws JSONException{ return super.getString(TAGS.VOTES);}
 
-    public Incident (String IncID, String PostDate, String Category, String Type,  String User, String Title, String GPSLat, String GPSLon, String Relevance)
+    public Incident (String IncID, String PostDate, String Category, String Type,
+                     String User, String Title, String GPSLat, String GPSLon,
+                     String Relevance, String Votes)
     throws JSONException {
         this.setIncID(IncID);
         this.setPostDate(PostDate);
@@ -68,6 +72,7 @@ public class Incident extends JSONObject implements Serializable{
         this.setGPSLat(jsonObject.getString(TAGS.GPS_LAT));
         this.setGPSLon(jsonObject.getString(TAGS.GPS_LON));
         this.setRelevance(jsonObject.getString(TAGS.RELEVANCE));
+        this.setVotes(jsonObject.getString(TAGS.VOTES));
     }
 
     @Override

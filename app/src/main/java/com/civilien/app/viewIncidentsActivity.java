@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 public class viewIncidentsActivity extends BaseActivity {
@@ -149,9 +148,8 @@ public class viewIncidentsActivity extends BaseActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            JSONArray myList = new JSONArray(IncidentArray);
             try {
-                return myList.getJSONObject(position).getString(TAGS.INC_ID);
+                return IncidentData.getJSONObject(position).getString(TAGS.INC_ID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
