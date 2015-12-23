@@ -43,13 +43,13 @@ public class CreateIncident extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                new sendIncidentData().execute(incident);
+                new sendIncidentData().execute(incident.ConvertToJSON());
 
             }
         });
     }
 
-    class sendIncidentData extends AsyncTask<Incident, Void, JSONObject> {
+    class sendIncidentData extends AsyncTask<JSONObject, Void, JSONObject> {
 
         public ProgressDialog pDialog= new ProgressDialog(CreateIncident.this);
         @Override
@@ -63,9 +63,9 @@ public class CreateIncident extends BaseActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(Incident... args) {
+        protected JSONObject doInBackground(JSONObject...  args) {
             HTTPHelper request = new HTTPHelper();
-            return request.JSON_POST_Request(CONSTANTS.URL_CREATE_INCIDENT, incident);
+            return request.JSON_POST_Request(CONSTANTS.URL_CREATE_INCIDENT, args);
         }
 
         @Override

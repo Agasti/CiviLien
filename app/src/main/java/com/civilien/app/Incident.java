@@ -12,6 +12,22 @@ import java.util.Iterator;
  */
 public class Incident extends JSONObject implements Serializable{
 
+
+    public JSONObject ConvertToJSON(){
+        JSONObject json = new JSONObject();
+        try {
+            if (this.getCategory() == null) json.put(TAGS.CATEGORY, ""); else json.put(TAGS.CATEGORY, this.getCategory());
+            if (this.getType() == null) json.put(TAGS.TYPE, ""); else json.put(TAGS.TYPE, this.getType());
+            if (this.getUser() == null) json.put(TAGS.USER, ""); else json.put(TAGS.USER, this.getUser());
+            if (this.getTitle() == null) json.put(TAGS.TITLE, ""); else json.put(TAGS.TITLE, this.getTitle());
+            if (this.getGPSLat() == null) json.put(TAGS.GPS_LAT, ""); else json.put(TAGS.GPS_LAT, this.getGPSLat());
+            if (this.getGPSLon() == null) json.put(TAGS.GPS_LON, ""); else json.put(TAGS.GPS_LON, this.getGPSLon());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     public Incident() throws JSONException {}
 
     public Incident setIncID(String value)throws JSONException{ return (Incident) this.put(TAGS.INC_ID, value);}

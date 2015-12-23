@@ -24,7 +24,7 @@ public class HTTPHelper {
 
     JSONObject json;
 
-    public JSONObject JSON_POST_Request(String location, Incident json_toSend){
+    public JSONObject JSON_POST_Request(String location, JSONObject[] json_toSend){
         JSONObject response = new JSONObject();
         HttpURLConnection conn = null;
         try {
@@ -32,14 +32,16 @@ public class HTTPHelper {
             // format json_toSend.data into request parameters
             StringBuilder request_params = new StringBuilder();
             int i = 0;
-            Iterator<String> keys = json_toSend.keys();
-            while (keys.hasNext()){
-                String key = keys.next();
-                if(i != 0){
-                    request_params.append("&");
+            for (JSONObject json: json_toSend) {
+                Iterator<String> keys = json_toSend[0].keys();
+                while (keys.hasNext()){
+                    String key = keys.next();
+                    if(i != 0){
+                        request_params.append("&");
+                    }
+                    request_params.append(key).append("=").append(URLEncoder.encode((String) json.get(key), "UTF-8"));
+                    i++;
                 }
-                request_params.append(key).append("=").append(URLEncoder.encode((String) json_toSend.get(key), "UTF-8"));
-                i++;
             }
             // Check log cat for request parameters
             Log.d("*", "*************************************************************************************************");
