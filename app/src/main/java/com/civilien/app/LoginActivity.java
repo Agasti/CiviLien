@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,8 +26,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +45,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
+    boolean Registering = false;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -51,12 +56,18 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      */
     int resultCode;
     private UserLoginTask mAuthTask = null;
+    JSONObject response;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private TextInputLayout mConfirmEmailLayout, mUsernameLayout, mConfirmPasswordLayout;
+    private AutoCompleteTextView mEmailView, mConfirmEmailView;
+    private EditText mPasswordView, mConfirmPasswordView, mUsernameView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private Switch mRegisterSwitch;
+
+    private Button mEmailSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +75,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mConfirmEmailLayout = (TextInputLayout) findViewById(R.id.confirm_email_layout);
+        mConfirmEmailView = (AutoCompleteTextView) findViewById(R.id.confirm_email);
         populateAutoComplete();
+
+        mUsernameLayout = (TextInputLayout) findViewById(R.id.username_layout);
+        mUsernameView = (EditText) findViewById(R.id.username);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -78,7 +94,35 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mConfirmPasswordLayout = (TextInputLayout) findViewById(R.id.confirm_password_layout);
+        mConfirmPasswordView = (EditText) findViewById(R.id.confirm_password);
+
+        mRegisterSwitch = (Switch) findViewById(R.id.switch_register);
+        mRegisterSwitch.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRegisterSwitch.setChecked(mRegisterSwitch.isChecked());
+            }
+        });
+        mRegisterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    mConfirmEmailLayout.setVisibility(View.VISIBLE);
+                    mUsernameLayout.setVisibility(View.VISIBLE);
+                    mConfirmPasswordLayout.setVisibility(View.VISIBLE);
+                    mEmailSignInButton.setText(R.string.action_sign_in);
+                } else {
+                    mConfirmEmailLayout.setVisibility(View.GONE);
+                    mUsernameLayout.setVisibility(View.GONE);
+                    mConfirmPasswordLayout.setVisibility(View.GONE);
+                    mEmailSignInButton.setText(R.string.action_sign_in_short);
+                }
+            }
+        });
+
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,13 +130,11 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//    }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -149,19 +191,48 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         // Reset errors.
         mEmailView.setError(null);
+        mConfirmEmailView.setError(null);
+        mUsernameView.setError(null);
         mPasswordView.setError(null);
+        mConfirmPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String email_confirmation = mConfirmEmailView.getText().toString();
+        String username = mUsernameView.getText().toString();
+        String password_confirmation = mConfirmPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
+        boolean registering = mRegisterSwitch.isChecked();
+
+        // Check for password confirmation.
+        if (registering && !(password_confirmation.equals(password))) {
+            mConfirmPasswordView.setError(getString(R.string.error_password_confirmation));
+            focusView = mConfirmPasswordView;
+            cancel = true;
+        }
+
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
+            cancel = true;
+        }
+
+        // Check for a valid username address.
+        if (registering && TextUtils.isEmpty(username)) {
+            mUsernameView.setError(getString(R.string.error_field_required));
+            focusView = mUsernameView;
+            cancel = true;
+        }
+
+        // Check for email address confirmation.
+        if (registering && !(email_confirmation.equals(email))) {
+            mConfirmEmailView.setError(getString(R.string.error_email_confirmation));
+            focusView = mConfirmEmailView;
             cancel = true;
         }
 
@@ -180,12 +251,18 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            if (!registering) {
+                mAuthTask = new UserLoginTask(email, password);
+                mAuthTask.execute(CONSTANTS.URL_LOGIN);
+            } else {
+                mAuthTask = new UserLoginTask(email, username, password);
+                mAuthTask.execute(CONSTANTS.URL_REGISTER);
+            }
         }
     }
 
@@ -293,29 +370,36 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
+        private final String mEmail, mUsername, mPassword;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
+            mUsername = "n/a";
+            mPassword = password;
+        }
+
+        UserLoginTask(String email,String username, String password) {
+            mEmail = email;
+            mUsername = username;
             mPassword = password;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(String... params) {
 
             JSONObject jsonCredentials = new JSONObject();
 
             try {
                 jsonCredentials.put("Email", mEmail);
+                jsonCredentials.put("Username", mUsername);
                 jsonCredentials.put("Password", mPassword);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            JSONObject response = new HTTPHelper().JSON_POST_Request(CONSTANTS.URL_LOGIN, jsonCredentials);
+            response = new HTTPHelper().JSON_POST_Request(params[0], jsonCredentials);
 
             resultCode = 0;
             try {
@@ -339,23 +423,39 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
+            String message = "initial value";
+            try {
+                message = response.getString("message");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             switch (resultCode) {
-                case 1: startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                case 1:
+                    try {
+                        User_Data = response.getJSONObject("User_Data");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                     break;
                 case 2: mPasswordView.setError(getString(R.string.error_incorrect_password));
                     mPasswordView.requestFocus();
                     break;
-                case 3: //TODO: Add register account functionality
-                    break;
-                case 22: mPasswordView.setError("Error: Password was not sent!");
-                    mPasswordView.requestFocus();
-                    break;
-                case 33: mEmailView.setError("Error: Email was not sent!");
+                case 3:
+                    mEmailView.setError(getString(R.string.error_account_not_found));
                     mEmailView.requestFocus();
                     break;
-                default: Log.d("default case reached", Integer.toString(resultCode));
+                case 22: mPasswordView.setError(getString(R.string.error_password_not_sent));
+                    mPasswordView.requestFocus();
+                    break;
+                case 33: mEmailView.setError(getString(R.string.error_email_not_sent));
+                    mEmailView.requestFocus();
+                    break;
+                default: Log.e("default case reached", message);
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     break;
             }
         }

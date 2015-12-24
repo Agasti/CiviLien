@@ -45,6 +45,7 @@ public class HTTPHelper {
             // Check log cat for request parameters
             Log.d("*", "*************************************************************************************************");
             Log.d("___REQUEST_PARAMS___", request_params.toString());
+            Log.d("___URL___", location);
 
 
             // create connection and send request
