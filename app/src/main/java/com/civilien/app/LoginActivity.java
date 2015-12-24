@@ -444,8 +444,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 case 2: mPasswordView.setError(getString(R.string.error_incorrect_password));
                     mPasswordView.requestFocus();
                     break;
-                case 3:
-                    mEmailView.setError(getString(R.string.error_account_not_found));
+                case 3: mEmailView.setError(getString(R.string.error_account_not_found));
                     mEmailView.requestFocus();
                     break;
                 case 22: mPasswordView.setError(getString(R.string.error_password_not_sent));
