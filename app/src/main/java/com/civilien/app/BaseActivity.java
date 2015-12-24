@@ -24,7 +24,7 @@ import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
-    static JSONObject User_data;
+    static JSONObject User_Data;
     static LatLng myLatLng;
     static ArrayList IncidentArray = new ArrayList();
     static JSONArray IncidentData;

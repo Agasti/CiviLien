@@ -23,7 +23,8 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if  (User_data == null) startActivity(new Intent(MainActivity.this,
+        // Login if not already did
+        if  (User_Data == null) startActivity(new Intent(MainActivity.this,
                 LoginActivity.class));
 
         // fab create Incident
@@ -51,13 +52,13 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        messages = (Button) findViewById(R.id.messagesButton);
+/*        messages = (Button) findViewById(R.id.messagesButton);
         messages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(MainActivity.this, MessagesActivity.class));
             }
-        });
+        });*/
     }
 
     @Override
