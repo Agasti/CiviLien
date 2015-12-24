@@ -5,16 +5,16 @@ package com.civilien.app;
  */
 public class CONSTANTS {
     final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    static final String IP_ADDRESS = "105.157.6.222";
     static long UPDATE_INTERVAL = 10 * 1000; // 10 Seconds
     static long FASTEST_INTERVAL = 2000; // 2 Seconds
-
-    static final String IP_ADDRESS = "105.157.6.222";
     static final String USERNAME = "test";
 
 
     // URLs
     static final String URL_GET_INCIDENTS = "http://"+CONSTANTS.IP_ADDRESS +"/get_all_incidents.php";
     static final String URL_CREATE_INCIDENT = "http://"+CONSTANTS.IP_ADDRESS +"/create_incident.php";
+    static final String URL_LOGIN = "http://"+CONSTANTS.IP_ADDRESS+"/app_login.php";
 
     public CONSTANTS() {
     }

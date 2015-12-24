@@ -21,8 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class BaseActivity extends AppCompatActivity {
 
+    static JSONObject User_data;
     static LatLng myLatLng;
     static ArrayList IncidentArray = new ArrayList();
     static JSONArray IncidentData;
