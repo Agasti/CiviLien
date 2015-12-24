@@ -97,7 +97,7 @@ public class HTTPHelper {
 //            Log.d("___RESPONSE___", response.toString());
         return response;
     }
-    public JSONObject JSON_GET_Request(String location){
+    public JSONObject JSON_Request(String location){
 
         HttpURLConnection conn = null;
 
@@ -130,19 +130,19 @@ public class HTTPHelper {
             }
         }
 
-        JSONObject jsonObject = json;
+        JSONObject response = json;
         if (json == null) {
             try {
-                jsonObject = new JSONObject("{" + TAGS.SUCCESS + ":0,\"message\":\"Failed to retrieve data\"}");
+                response = new JSONObject("{" + TAGS.SUCCESS + ":0,\"message\":\"Failed to retrieve data\"}");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         // Check log cat for JSON response
-        Log.d("JSON DATA", jsonObject.toString());
+        Log.d("JSON DATA", response.toString());
 
-        return jsonObject;
+        return response;
     }
 
 

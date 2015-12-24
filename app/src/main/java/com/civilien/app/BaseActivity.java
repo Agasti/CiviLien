@@ -108,7 +108,7 @@ public class BaseActivity extends AppCompatActivity {
         protected Void doInBackground(Void... args) {
 
             HTTPHelper request = new HTTPHelper();
-            JSONObject json = request.JSON_GET_Request(CONSTANTS.URL_GET_INCIDENTS);
+            JSONObject json = request.JSON_Request(CONSTANTS.URL_GET_INCIDENTS);
 
             JSONArray Incident_List = null;
             try {
