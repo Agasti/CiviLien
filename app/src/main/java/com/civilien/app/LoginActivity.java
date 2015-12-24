@@ -15,8 +15,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,7 +27,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -35,7 +47,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -306,22 +318,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
+//
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
+
+            JSONObject jsonCredentials = new JSONObject();
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                jsonCredentials.put("Email", mEmail);
+                jsonCredentials.put("Password", mPassword);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+            JSONObject response = JSON_POST_Request(CONSTANTS.URL_LOGIN, jsonCredentials);
+            int success;
+            success = 0;
+            try {
+                success = response.getInt(TAGS.SUCCESS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (success == 1) {
+                try {
+                    User_data = response.getJSONObject("User_Data");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                return true;
             }
 
-            // TODO: register the new account here.
+            Log.d("__LOGIN FAILED__", response.toString());
             return false;
         }
 
@@ -344,5 +380,78 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    public JSONObject JSON_POST_Request(String location, JSONObject json_toSend){
+        JSONObject response = new JSONObject();
+        HttpURLConnection conn = null;
+        try {
+
+            // format json_toSend.data into request parameters
+            StringBuilder request_params = new StringBuilder();
+            int i = 0;
+            Iterator<String> keys = json_toSend.keys();
+            while (keys.hasNext()){
+                String key = keys.next();
+                if(i != 0){
+                    request_params.append("&");
+                }
+                request_params.append(key).append("=").append(URLEncoder.encode((String) json_toSend.get(key), "UTF-8"));
+                i++;
+            }
+            // Check log cat for request parameters
+            Log.d("*", "*************************************************************************************************");
+            Log.d("___REQUEST_PARAMS___", request_params.toString());
+
+
+            // create connection and send request
+            URL url = new URL(location);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
+            conn.setRequestProperty("Content-Length","" + Integer.toString(request_params.toString().getBytes().length));
+            conn.setRequestProperty("Content-Language", "en-US");
+            conn.setUseCaches(false);
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+
+            DataOutputStream writer = new DataOutputStream(conn.getOutputStream());
+            writer.writeBytes(request_params.toString());
+            writer.flush();
+            writer.close();
+
+            conn.connect();
+
+            InputStream InpS = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    InpS, "iso-8859-1"), 8);
+
+
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                line = line + "\n";
+                sb.append(line);
+            }
+            InpS.close();
+            // Check log cat for built string
+            Log.d("___RESPONSE STRING___", sb.toString());
+            if (sb.length() > 0) {
+                response = new JSONObject(sb.toString());
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        // Check log cat for JSON response
+//            Log.d("___RESPONSE___", response.toString());
+        return response;
+    }
+
 }
 
