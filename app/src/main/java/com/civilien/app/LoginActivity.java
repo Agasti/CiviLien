@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -30,16 +31,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -57,6 +49,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+    int resultCode;
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -97,6 +90,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         mProgressView = findViewById(R.id.login_progress);
     }
 
+//    @Override
+//    public void onBackPressed() {
+//    }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -297,7 +293,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -308,7 +304,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
 
         @Override
-        protected Integer doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
 
             JSONObject jsonCredentials = new JSONObject();
 
@@ -319,16 +315,15 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 e.printStackTrace();
             }
 
-            JSONObject response = JSON_POST_Request(CONSTANTS.URL_LOGIN, jsonCredentials);
+            JSONObject response = new HTTPHelper().JSON_POST_Request(CONSTANTS.URL_LOGIN, jsonCredentials);
 
-            int success;
-            success = 0;
+            resultCode = 0;
             try {
-                success = response.getInt(TAGS.SUCCESS);
+                resultCode = response.getInt(TAGS.SUCCESS);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (success == 1) {
+            if (resultCode == 1) {
                 try {
                     User_Data = response.getJSONObject("User_Data");
                 } catch (JSONException e) {
@@ -336,17 +331,18 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 }
             }
 
-            Log.d("doInBackground END", Integer.toString(success));
-            return success;
+            Log.d("doInBackground END", Integer.toString(resultCode));
+            return false;
         }
 
         @Override
-        protected void onPostExecute(int success) {
+        protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
 
-            switch (success) {
-                case 1:  finish();
+            switch (resultCode) {
+                case 1: startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
                     break;
                 case 2: mPasswordView.setError(getString(R.string.error_incorrect_password));
                     mPasswordView.requestFocus();
@@ -359,7 +355,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 case 33: mEmailView.setError("Error: Email was not sent!");
                     mEmailView.requestFocus();
                     break;
-                default: Log.d("default case reached", Integer.toString(success));
+                default: Log.d("default case reached", Integer.toString(resultCode));
                     break;
             }
         }
@@ -369,78 +365,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             mAuthTask = null;
             showProgress(false);
         }
-    }
-
-    public JSONObject JSON_POST_Request(String location, JSONObject json_toSend){
-        JSONObject response = new JSONObject();
-        HttpURLConnection conn = null;
-        try {
-
-            // format json_toSend.data into request parameters
-            StringBuilder request_params = new StringBuilder();
-            int i = 0;
-            Iterator<String> keys = json_toSend.keys();
-            while (keys.hasNext()){
-                String key = keys.next();
-                if(i != 0){
-                    request_params.append("&");
-                }
-                request_params.append(key).append("=").append(URLEncoder.encode((String) json_toSend.get(key), "UTF-8"));
-                i++;
-            }
-            // Check log cat for request parameters
-            Log.d("*", "*************************************************************************************************");
-            Log.d("___REQUEST_PARAMS___", request_params.toString());
-
-
-            // create connection and send request
-            URL url = new URL(location);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
-            conn.setRequestProperty("Content-Length","" + Integer.toString(request_params.toString().getBytes().length));
-            conn.setRequestProperty("Content-Language", "en-US");
-            conn.setUseCaches(false);
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-
-            DataOutputStream writer = new DataOutputStream(conn.getOutputStream());
-            writer.writeBytes(request_params.toString());
-            writer.flush();
-            writer.close();
-
-            conn.connect();
-
-            InputStream InpS = conn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    InpS, "iso-8859-1"), 8);
-
-
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                line = line + "\n";
-                sb.append(line);
-            }
-            InpS.close();
-            // Check log cat for built string
-            Log.d("___RESPONSE STRING___", sb.toString());
-            if (sb.length() > 0) {
-                response = new JSONObject(sb.toString());
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-
-        // Check log cat for JSON response
-//            Log.d("___RESPONSE___", response.toString());
-        return response;
     }
 
 }

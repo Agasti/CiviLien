@@ -23,8 +23,7 @@ public class HTTPHelper {
     }
 
     JSONObject json;
-
-    public JSONObject JSON_POST_Request(String location, JSONObject[] json_toSend){
+    public JSONObject JSON_POST_Request(String location, JSONObject... json_toSend){
         JSONObject response = new JSONObject();
         HttpURLConnection conn = null;
         try {
@@ -49,7 +48,7 @@ public class HTTPHelper {
 
 
             // create connection and send request
-            URL url = new URL(CONSTANTS.URL_CREATE_INCIDENT);
+            URL url = new URL(location);
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);

@@ -24,8 +24,11 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         // Login if not already did
-        if  (User_Data == null) startActivity(new Intent(MainActivity.this,
-                LoginActivity.class));
+        if  (User_Data == null) {
+            startActivity(new Intent(MainActivity.this,
+                    LoginActivity.class));
+            finish();
+        }
 
         // fab create Incident
         FloatingActionButton CreateIncident_fab = (FloatingActionButton) findViewById(R.id.fab);
