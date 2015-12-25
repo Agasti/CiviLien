@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -58,6 +59,35 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null){
+            try {
+                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
+                IncidentData = new JSONArray(savedInstanceState.getString("IncidentData"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String AppData_user = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
+
+        if (!AppData_user.equals("EMPTY")) {
+            try {
+                User_Data = new JSONObject(AppData_user);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String AppData_incidents = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
+
+        if (!AppData_incidents.equals("EMPTY")) {
+            try {
+                IncidentData = new JSONArray(AppData_incidents);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
                 .addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
@@ -77,8 +107,16 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         super.onSaveInstanceState(outState);
     }
 
+    public void saveAppData(){
+        SharedPreferences.Editor ShrPrefEditor = getPreferences(Context.MODE_PRIVATE).edit();
+        ShrPrefEditor.putString("User_Data", User_Data.toString());
+        ShrPrefEditor.putString("IncidentData", IncidentData.toString());
+        ShrPrefEditor.commit();
+    }
+
     @Override
     protected void onStop() {
+        saveAppData();
         super.onStop();
     }
 
