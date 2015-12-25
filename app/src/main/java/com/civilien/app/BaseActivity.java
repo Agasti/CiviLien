@@ -66,6 +66,21 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         mGoogleApiClient.connect();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Bundle appStateData = new Bundle();
+        appStateData.putString("User_Data", User_Data.toString());
+        appStateData.putString("IncidentData", IncidentData.toString());
+
+        outState.putBundle("App state", appStateData);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
     //Handles permission and messages
     @TargetApi(Build.VERSION_CODES.M)
