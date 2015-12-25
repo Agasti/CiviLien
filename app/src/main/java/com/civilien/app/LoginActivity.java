@@ -72,6 +72,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new UserLoginTask("sehail.fillali@gmail.com", "hadak").execute(CONSTANTS.URL_LOGIN);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -423,7 +424,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-            String message = "initial value";
+            String message = "Error: default switch case";
             try {
                 message = response.getString("message");
             } catch (JSONException e) {
