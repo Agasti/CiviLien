@@ -30,17 +30,16 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState != null){
-            Log.d("SAVEDSTATE___", savedInstanceState.toString());
-            try {
-                User_Data = new JSONObject(savedInstanceState.getString("App_state"));
-                Log.w("User_Data", User_Data.toString());
-                IncidentData = new JSONArray(savedInstanceState.getString("IncidentData"));
-                Log.w("IncidentData", IncidentData.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        //TODO fix savedState
+//        if (savedInstanceState != null){
+//            Log.d("SAVEDSTATE___", savedInstanceState.toString());
+//            try {
+//                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
+//                Log.w("User_Data", User_Data.toString());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         Log.d("SharedPref to load", getPreferences(MODE_PRIVATE).toString());
         // restoring preferences

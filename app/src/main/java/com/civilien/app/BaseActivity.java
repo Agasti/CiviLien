@@ -77,9 +77,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         if (User_Data.length() != 0) {
             outState.putString("User_Data", User_Data.toString());
         }
-        if (IncidentData.length() != 0) {
-            outState.putString("IncidentData", IncidentData.toString());
-        }
         super.onSaveInstanceState(outState);
     }
 
@@ -153,35 +150,30 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         }
     }
 
-    public void getIncidentsData(Boolean showDialog) {
+    public void getIncidentsData(final Boolean showDialog) {
 
-        if (IncidentArray.isEmpty()) {
+        DownloadIncidentsData.TaskListener listener; listener = new DownloadIncidentsData.TaskListener() {
 
-            DownloadIncidentsData.TaskListener listener = null;
-            if(showDialog) {
-                listener = new DownloadIncidentsData.TaskListener() {
+            private ProgressDialog pDialog = new ProgressDialog(BaseActivity.this);
 
-                    private ProgressDialog pDialog = new ProgressDialog(BaseActivity.this);
-
-                    @Override
-                    public void onStarted() {
-                        pDialog.setMessage("Getting Incidents data..");
-                        pDialog.setIndeterminate(false);
-                        pDialog.show();
-                    }
-
-                    @Override
-                    public void onFinished() {
-                        pDialog.dismiss();
-
-                        useIncidentData();
-                    }
-                };
+            @Override
+            public void onStarted() {
+                if (showDialog) {
+                    pDialog.setMessage("Getting Incidents data..");
+                    pDialog.setIndeterminate(false);
+                    pDialog.show();
+                }
             }
-            new DownloadIncidentsData(listener).execute();
-        } else {
-            useIncidentData();
-        }
+
+            @Override
+            public void onFinished() {
+                if (showDialog) {
+                    pDialog.dismiss();
+                }
+                useIncidentData();
+            }
+        };
+        new DownloadIncidentsData(listener).execute();
     }
 
     public void useIncidentData() {}
