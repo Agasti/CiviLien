@@ -61,9 +61,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
 
         mMap = googleMap;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            CallWithPermission(MapsActivity.this, SET_MY_LOCATION);
-        } else mMap.setMyLocationEnabled(true);
+        if (mGoogleApiClient.isConnected()) {
+            mMap.setMyLocationEnabled(true);
+        }
 
         downloadIncidentData(SHOW_DIALOG);
     }

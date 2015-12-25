@@ -52,14 +52,15 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     final static int SET_MY_LOCATION = 3;
 
     private static final Boolean SHOW_DIALOG = true;
+    static boolean REQUEST_PENDING = false;
 
     static GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
     Location mCurrentLocation = null;
+    static LatLng myLatLng;
 
     static JSONObject User_Data = new JSONObject();
-    static LatLng myLatLng;
     static ArrayList IncidentArray = new ArrayList();
     static JSONArray IncidentData = new JSONArray();
 
@@ -67,14 +68,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null){
-            try {
-                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
-                IncidentData = new JSONArray(savedInstanceState.getString("IncidentData"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (savedInstanceState != null){
+//            try {
+//                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
+//                IncidentData = new JSONArray(savedInstanceState.getString("IncidentData"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         String AppData_user = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
 
@@ -371,30 +372,31 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     //Handles permission and messages
     @TargetApi(Build.VERSION_CODES.M)
-    public void CallWithPermission(Context context, final int requestCode) {
+    void CallWithPermission(Context context, final int requestCode) {
         if (ActivityCompat.checkSelfPermission(BaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(BaseActivity.this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Snackbar.make(new View(BaseActivity.this), "Please grant the app access to location services in \"" +
-                                "Settings > APPS > Configure Apps > App Permissions > Location\"",
-                        Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                Snackbar.make(findViewById(android.R.id.content), R.string.PERMISSION_RATIONALE_location,
+                        Snackbar.LENGTH_INDEFINITE).setAction(R.string.ACCEPT, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                requestCode);
+                        ActivityCompat.requestPermissions(BaseActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+                        Snackbar.make(findViewById(android.R.id.content), " Please change the setting for the app in: \"Settings > APPS > Configure Apps > App Permissions > Location\"", Snackbar.LENGTH_INDEFINITE).show();
                     }}).show();
                 return;
             }
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+            ActivityCompat.requestPermissions(BaseActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
         }
     }
 
     // Permission callback
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        Log.d("REQUEST CODE", Integer.toString(requestCode));
         Log.d("GRANT RESULTS", Arrays.toString(grantResults));
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Permission Granted
@@ -417,33 +419,5 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
             // Permission Denied
             Toast.makeText(BaseActivity.this, "Permission denied!", Toast.LENGTH_SHORT).show();
         }
-//        switch (requestCode) {
-//            case GET_LAST_LOCATION:
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // Permission Granted
-//                    mCurrentLocation = LocationServices.FusedLocationApi.
-//                            getLastLocation(mGoogleApiClient);
-//                    Toast.makeText(BaseActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    // Permission Denied
-//                    CAN_ACCESS_LOCATION = false;
-//                    Toast.makeText(BaseActivity.this, "Location access denied!", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            case REQUEST_LOCATION_UPDATE:
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // Permission Granted
-//                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-//                            mLocationRequest, this);
-//                    Toast.makeText(BaseActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    // Permission Denied
-//                    CAN_ACCESS_LOCATION = false;
-//                    Toast.makeText(BaseActivity.this, "Location access denied!", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            default:
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        }
     }
 }

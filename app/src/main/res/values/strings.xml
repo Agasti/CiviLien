@@ -125,4 +125,7 @@
     <string name="error_email_not_sent">Error: Email was not sent!</string>
     <string name="error_email_confirmation">Email confirmation doesn\'t match!</string>
     <string name="error_password_confirmation">Password confirmation doesn\'t match!</string>
+    <string name="GRANT_PERMISSION">GRANT PERMISSION</string>
+    <string name="PERMISSION_RATIONALE_location">The app needs access to location data to function properly</string>
+    <string name="ACCEPT">Accept</string>
 </resources>
