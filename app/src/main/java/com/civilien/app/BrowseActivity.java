@@ -12,14 +12,14 @@ public class BrowseActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
-        downloadIncidentData(SHOW_DIALOG);
+        getIncidentsData(SHOW_DIALOG);
     }
 
 
     @Override
     public void useIncidentData() {
 
-        createAdapterList(R.id.browseListView,R.layout.browse_row);
+        createAdapterList(R.id.browseListView, R.layout.browse_row);
 
     }
 }

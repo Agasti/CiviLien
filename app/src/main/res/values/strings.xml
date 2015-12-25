@@ -128,4 +128,5 @@
     <string name="GRANT_PERMISSION">GRANT PERMISSION</string>
     <string name="PERMISSION_RATIONALE_location">The app needs access to location data to function properly</string>
     <string name="ACCEPT">Accept</string>
+    <string name="PATH_permission_location"><![CDATA[" Please change the setting for the app in: \"Settings > APPS > Configure Apps > App Permissions > Location\""]]></string>
 </resources>

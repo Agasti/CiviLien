@@ -65,7 +65,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
         }
 
-        downloadIncidentData(SHOW_DIALOG);
+        getIncidentsData(SHOW_DIALOG);
     }
 
     @Override

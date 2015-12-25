@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -51,9 +50,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     final static int REQUEST_LOCATION_UPDATE = 2;
     final static int SET_MY_LOCATION = 3;
 
-    private static final Boolean SHOW_DIALOG = true;
-    static boolean REQUEST_PENDING = false;
-
     static GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
@@ -68,35 +64,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        if (savedInstanceState != null){
-//            try {
-//                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
-//                IncidentData = new JSONArray(savedInstanceState.getString("IncidentData"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        String AppData_user = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
-
-        if (!AppData_user.equals("EMPTY")) {
-            try {
-                User_Data = new JSONObject(AppData_user);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String AppData_incidents = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
-
-        if (!AppData_incidents.equals("EMPTY")) {
-            try {
-                IncidentData = new JSONArray(AppData_incidents);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
         // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
                 .addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
@@ -107,37 +74,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Bundle appStateData = new Bundle();
         if (User_Data.length() != 0) {
-            appStateData.putString("User_Data", User_Data.toString());
+            outState.putString("User_Data", User_Data.toString());
         }
         if (IncidentData.length() != 0) {
-            appStateData.putString("IncidentData", IncidentData.toString());
+            outState.putString("IncidentData", IncidentData.toString());
         }
-
-        outState.putBundle("App state", appStateData);
-
         super.onSaveInstanceState(outState);
     }
-
-    public void saveAppData(){
-        SharedPreferences.Editor ShrPrefEditor = getPreferences(Context.MODE_PRIVATE).edit();
-        if (User_Data.length() != 0) {
-            ShrPrefEditor.putString("User_Data", User_Data.toString());
-        }
-        if (IncidentData.length() != 0) {
-            ShrPrefEditor.putString("IncidentData", IncidentData.toString());
-        }
-        ShrPrefEditor.commit();
-    }
-
-    @Override
-    protected void onStop() {
-        saveAppData();
-        super.onStop();
-    }
-
-
 
     public void onConnected(Bundle dataBundle) {
         // Get last known recent location.
@@ -209,19 +153,19 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         }
     }
 
-    public void downloadIncidentData(Boolean showDialog) {
+    public void getIncidentsData(Boolean showDialog) {
 
         if (IncidentArray.isEmpty()) {
 
-            getIncidentData.TaskListener listener = null;
+            DownloadIncidentsData.TaskListener listener = null;
             if(showDialog) {
-                listener = new getIncidentData.TaskListener() {
+                listener = new DownloadIncidentsData.TaskListener() {
 
                     private ProgressDialog pDialog = new ProgressDialog(BaseActivity.this);
 
                     @Override
                     public void onStarted() {
-                        pDialog.setMessage("Getting Incidents..");
+                        pDialog.setMessage("Getting Incidents data..");
                         pDialog.setIndeterminate(false);
                         pDialog.show();
                     }
@@ -234,7 +178,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                     }
                 };
             }
-            new getIncidentData(listener).execute();
+            new DownloadIncidentsData(listener).execute();
         } else {
             useIncidentData();
         }
@@ -259,7 +203,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         });
     }
 
-    public static class getIncidentData extends AsyncTask<Void, Void, Void> {
+    public static class DownloadIncidentsData extends AsyncTask<Void, Void, Void> {
 
         public int success;
         public interface TaskListener {
@@ -269,7 +213,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
         private final TaskListener taskListener;
 
-        public getIncidentData(TaskListener Listener){
+        public DownloadIncidentsData(TaskListener Listener){
             this.taskListener = Listener;
         }
 
@@ -306,6 +250,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                         // adding incident element into array
                         IncidentArray.add(new Incident(Incident_List.getJSONObject(i)));
                     }
+                    Log.w("IncidentArray", IncidentArray.toString());
+                    Log.e("IncidentData_", IncidentData.toString());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -384,7 +330,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                     @Override
                     public void onClick(View v) {
                         ActivityCompat.requestPermissions(BaseActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-                        Snackbar.make(findViewById(android.R.id.content), " Please change the setting for the app in: \"Settings > APPS > Configure Apps > App Permissions > Location\"", Snackbar.LENGTH_INDEFINITE).show();
+                        Snackbar.make(findViewById(android.R.id.content), R.string.PATH_permission_location, Snackbar.LENGTH_INDEFINITE).show();
                     }}).show();
                 return;
             }
