@@ -1,6 +1,8 @@
 package com.civilien.app;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -54,15 +56,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @TargetApi(Build.VERSION_CODES.M)
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
 
-        handlePermissions(getApplicationContext(), LOCATION_permissionCode);
-        mMap.setMyLocationEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            CallWithPermission(MapsActivity.this, SET_MY_LOCATION);
+        } else mMap.setMyLocationEnabled(true);
 
         downloadIncidentData(SHOW_DIALOG);
-
     }
 
     @Override

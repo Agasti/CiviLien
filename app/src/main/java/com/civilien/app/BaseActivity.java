@@ -28,6 +28,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -35,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,17 +45,23 @@ import java.util.List;
 public class BaseActivity extends AppCompatActivity implements LocationListener,
     GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    static boolean CAN_ACCESS_LOCATION = false;
 
-    final static int LOCATION_permissionCode = 1;
+    final static int GET_LAST_LOCATION = 1;
+    final static int REQUEST_LOCATION_UPDATE = 2;
+    final static int SET_MY_LOCATION = 3;
 
     private static final Boolean SHOW_DIALOG = true;
+
+    static GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
+    Location mCurrentLocation = null;
 
-    static JSONObject User_Data;
+    static JSONObject User_Data = new JSONObject();
     static LatLng myLatLng;
     static ArrayList IncidentArray = new ArrayList();
-    static JSONArray IncidentData;
+    static JSONArray IncidentData = new JSONArray();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +107,12 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Bundle appStateData = new Bundle();
-        appStateData.putString("User_Data", User_Data.toString());
-        appStateData.putString("IncidentData", IncidentData.toString());
+        if (User_Data.length() != 0) {
+            appStateData.putString("User_Data", User_Data.toString());
+        }
+        if (IncidentData.length() != 0) {
+            appStateData.putString("IncidentData", IncidentData.toString());
+        }
 
         outState.putBundle("App state", appStateData);
 
@@ -109,8 +121,12 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     public void saveAppData(){
         SharedPreferences.Editor ShrPrefEditor = getPreferences(Context.MODE_PRIVATE).edit();
-        ShrPrefEditor.putString("User_Data", User_Data.toString());
-        ShrPrefEditor.putString("IncidentData", IncidentData.toString());
+        if (User_Data.length() != 0) {
+            ShrPrefEditor.putString("User_Data", User_Data.toString());
+        }
+        if (IncidentData.length() != 0) {
+            ShrPrefEditor.putString("IncidentData", IncidentData.toString());
+        }
         ShrPrefEditor.commit();
     }
 
@@ -120,54 +136,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         super.onStop();
     }
 
-    //Handles permission and messages
-    @TargetApi(Build.VERSION_CODES.M)
-    public void handlePermissions(Context context, final int requestCode) {
-        if (ActivityCompat.checkSelfPermission(BaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(BaseActivity.this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Snackbar.make(new View(getApplicationContext()), "Please grant the app access to location services in \"" +
-                                "Settings > APPS > Configure Apps > App Permissions > Location\"",
-                        Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                requestCode);
-                    }}).show();
-                return;
-            }
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-        }
-    }
-
-    // Permission callback
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_permissionCode:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    Toast.makeText(BaseActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Permission Denied
-                    Toast.makeText(BaseActivity.this, "Location access denied!", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
 
 
     public void onConnected(Bundle dataBundle) {
         // Get last known recent location.
 
-        handlePermissions(getApplicationContext(), LOCATION_permissionCode);
-        Location mCurrentLocation = LocationServices.FusedLocationApi.
-                getLastLocation(mGoogleApiClient);
+        if (mGoogleApiClient.isConnected()) {
+            CallWithPermission(BaseActivity.this, GET_LAST_LOCATION);
+        }
         // Note that this can be NULL if last location isn't already known.
         if (mCurrentLocation != null) {
             // Print current location if not null
@@ -178,6 +154,18 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         startLocationUpdates();
     }
 
+    // Trigger new location updates at interval
+    protected void startLocationUpdates() {
+        // Create the location request
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(CONSTANTS.UPDATE_INTERVAL)
+                .setFastestInterval(CONSTANTS.FASTEST_INTERVAL);
+        // Request location updates
+        if (CAN_ACCESS_LOCATION && mGoogleApiClient.isConnected()) {
+            CallWithPermission(getApplicationContext(), REQUEST_LOCATION_UPDATE);
+        }
+    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -187,22 +175,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
             Toast.makeText(this, "Network lost. Please re-connect.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    // Trigger new location updates at interval
-    protected void startLocationUpdates() {
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(CONSTANTS.UPDATE_INTERVAL)
-                .setFastestInterval(CONSTANTS.FASTEST_INTERVAL);
-        // Request location updates
-        if (mGoogleApiClient.isConnected()) {
-            handlePermissions(getApplicationContext(), LOCATION_permissionCode);
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                    mLocationRequest, this);
-        }
-    }
-
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -222,9 +194,12 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-        handlePermissions(getApplicationContext(), LOCATION_permissionCode);
-        Location myCurrentLocation = LocationServices.FusedLocationApi.
-                getLastLocation(mGoogleApiClient);
+        Location myCurrentLocation = null;
+        if (CAN_ACCESS_LOCATION && mGoogleApiClient.isConnected()) {
+            CallWithPermission(getApplicationContext(), GET_LAST_LOCATION);
+            myCurrentLocation = LocationServices.FusedLocationApi.
+                    getLastLocation(mGoogleApiClient);
+        }
         // Note that this can be NULL if last location isn't already known.
         if (myCurrentLocation != null) {
             // Print current location if not null
@@ -232,6 +207,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
             myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
     }
+
     public void downloadIncidentData(Boolean showDialog) {
 
         if (IncidentArray.isEmpty()) {
@@ -391,5 +367,83 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                 }
             });*/
         }
+    }
+
+    //Handles permission and messages
+    @TargetApi(Build.VERSION_CODES.M)
+    public void CallWithPermission(Context context, final int requestCode) {
+        if (ActivityCompat.checkSelfPermission(BaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(BaseActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Snackbar.make(new View(BaseActivity.this), "Please grant the app access to location services in \"" +
+                                "Settings > APPS > Configure Apps > App Permissions > Location\"",
+                        Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                requestCode);
+                    }}).show();
+                return;
+            }
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+        }
+    }
+
+    // Permission callback
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("GRANT RESULTS", Arrays.toString(grantResults));
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission Granted
+            Toast.makeText(BaseActivity.this, "Permission granted!", Toast.LENGTH_SHORT).show();
+
+            switch (requestCode) {
+                case GET_LAST_LOCATION:
+                    mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    break;
+                case REQUEST_LOCATION_UPDATE:
+                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    break;
+                case SET_MY_LOCATION:
+                    mMap.setMyLocationEnabled(true);
+                    break;
+                default:
+                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        } else {
+            // Permission Denied
+            Toast.makeText(BaseActivity.this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        }
+//        switch (requestCode) {
+//            case GET_LAST_LOCATION:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // Permission Granted
+//                    mCurrentLocation = LocationServices.FusedLocationApi.
+//                            getLastLocation(mGoogleApiClient);
+//                    Toast.makeText(BaseActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    // Permission Denied
+//                    CAN_ACCESS_LOCATION = false;
+//                    Toast.makeText(BaseActivity.this, "Location access denied!", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//            case REQUEST_LOCATION_UPDATE:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // Permission Granted
+//                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+//                            mLocationRequest, this);
+//                    Toast.makeText(BaseActivity.this, "Location access granted!", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    // Permission Denied
+//                    CAN_ACCESS_LOCATION = false;
+//                    Toast.makeText(BaseActivity.this, "Location access denied!", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
     }
 }
