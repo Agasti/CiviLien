@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.location.LocationServices;
 
@@ -19,7 +20,8 @@ import org.json.JSONObject;
 
 public class HomeScreen extends BaseActivity {
 
-    Button map, browse, civimates, messages;
+    ImageButton map, browse;
+    Button civimates, messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,7 @@ public class HomeScreen extends BaseActivity {
             }
         });
 
-        map = (Button) findViewById(R.id.mapButton);
+        map = (ImageButton) findViewById(R.id.btn_Map);
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +96,7 @@ public class HomeScreen extends BaseActivity {
             }
         });
 
-        browse = (Button) findViewById(R.id.browseButton);
+        browse = (ImageButton) findViewById(R.id.btn_Browse);
         browse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

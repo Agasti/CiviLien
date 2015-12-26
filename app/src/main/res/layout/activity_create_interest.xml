@@ -213,5 +213,14 @@
         android:orientation="vertical"
         android:layout_weight="0.21"></LinearLayout>
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.21"
+        android:spinnerMode="dialog"
+        android:addStatesFromChildren="false" />
+
 
 </LinearLayout>
