@@ -20,7 +20,7 @@ import org.json.JSONException;
 
 import java.util.Random;
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
+public class Map extends BaseActivity implements OnMapReadyCallback {
 
     private static final Boolean SHOW_DIALOG = true;
     private GoogleMap mMap;
@@ -40,7 +40,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, CreateIncident.class);
+                Intent intent = new Intent(Map.this, CreateInterest.class);
                 startActivity(intent);
             }
         });
@@ -61,11 +61,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
 
         mMap = googleMap;
 
-        if (mGoogleApiClient.isConnected()) {
+        if (!CANNOT_ACCESS_LOCATION) {
+            //noinspection ResourceType
             mMap.setMyLocationEnabled(true);
         }
 
-        getIncidentsData(SHOW_DIALOG);
+        if (IncidentArray.isEmpty()) {
+            getIncidentsData(SHOW_DIALOG);
+        } else useIncidentData();
     }
 
     @Override
@@ -113,7 +116,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
                 public boolean onMarkerClick(Marker marker) {
 
                     Log.d("___MARKER CLICK____", marker.getId() + "  " + marker.getTitle());
-                    Intent checkIncident = new Intent(MapsActivity.this, viewIncidentsActivity.class);
+                    Intent checkIncident = new Intent(Map.this, ViewInterest.class);
                     checkIncident.putExtra("position", marker.getId().substring(1));
                     startActivity(checkIncident);
                     return true;

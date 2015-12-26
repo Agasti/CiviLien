@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 
-public class viewIncidentsActivity extends BaseActivity {
+public class ViewInterest extends BaseActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -36,7 +36,7 @@ public class viewIncidentsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_incidents);
+        setContentView(R.layout.activity_view_interest);
 
         Intent callerIntent = getIntent();
         int position = Integer.parseInt(callerIntent.getStringExtra("position"));

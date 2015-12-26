@@ -3,7 +3,7 @@ package com.civilien.app;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 
-public class BrowseActivity extends BaseActivity {
+public class Browse extends BaseActivity {
 
     Boolean SHOW_DIALOG = true;
 

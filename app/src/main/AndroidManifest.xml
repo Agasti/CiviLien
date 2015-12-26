@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeScreen"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -40,30 +40,30 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".Map"
             android:label="@string/title_activity_maps">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.civilien.app.MainActivity" />
+                android:value=".HomeScreen" />
         </activity>
         <activity
-            android:name=".CreateIncident"
+            android:name=".CreateInterest"
             android:label="@string/CreateIncidentTitle" />
         <activity
-            android:name=".BrowseActivity"
+            android:name=".Browse"
             android:label="@string/BrowseTitle" />
         <activity android:name=".BaseActivity" />
         <activity
-            android:name=".viewIncidentsActivity"
+            android:name=".ViewInterest"
             android:label="@string/title_activity_view_incidents"
-            android:parentActivityName=".BrowseActivity"
+            android:parentActivityName=".Browse"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.civilien.app.BrowseActivity" />
+                android:value=".Browse" />
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Login"
             android:label="@string/title_activity_login"></activity>
     </application>
 

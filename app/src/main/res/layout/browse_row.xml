@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    tools:context="com.civilien.app.BrowseActivity"
+    tools:context=".Browse"
     android:focusable="false"
     android:paddingRight="10dp"
     android:paddingLeft="0dp">
@@ -48,7 +48,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text_GPSLat"
+        android:id="@+id/Label_GPSLat"
         android:textSize="10sp"
         android:textStyle="bold"
         android:text="GPSLat"
@@ -75,13 +75,13 @@
         android:textStyle="bold"
         android:text="GPSLon"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/text_GPSLat"
-        android:layout_alignStart="@+id/text_GPSLat" />
+        android:layout_alignLeft="@+id/Label_GPSLat"
+        android:layout_alignStart="@+id/Label_GPSLat" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text_User"
+        android:id="@+id/text_Username"
         android:textSize="15dp"
         android:textStyle="bold"
         android:text="User"

@@ -16,6 +16,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,7 +29,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -44,16 +45,13 @@ import java.util.List;
 public class BaseActivity extends AppCompatActivity implements LocationListener,
     GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    static boolean CAN_ACCESS_LOCATION = false;
+    static boolean CANNOT_ACCESS_LOCATION;
 
-    final static int GET_LAST_LOCATION = 1;
-    final static int REQUEST_LOCATION_UPDATE = 2;
-    final static int SET_MY_LOCATION = 3;
+    final static int PermissionCode_LOCATION = 1;
 
-    static GoogleMap mMap;
     static GoogleApiClient mGoogleApiClient;
     static LocationRequest mLocationRequest;
-    Location mCurrentLocation = null;
+    static Location myCurrentLocation;
     static LatLng myLatLng;
 
     static JSONObject User_Data = new JSONObject();
@@ -64,12 +62,41 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        CANNOT_ACCESS_LOCATION = (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+
         // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
                 .addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
 
-        // start the location client
-        mGoogleApiClient.connect();
+        if (CANNOT_ACCESS_LOCATION) {
+            HandlePermissions(getApplicationContext(), PermissionCode_LOCATION);
+        } else {
+            // start the location client
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -84,13 +111,15 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         // Get last known recent location.
 
         if (mGoogleApiClient.isConnected()) {
-            CallWithPermission(BaseActivity.this, GET_LAST_LOCATION);
+            //noinspection ResourceType
+            myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
+
         // Note that this can be NULL if last location isn't already known.
-        if (mCurrentLocation != null) {
+        if (myCurrentLocation != null) {
             // Print current location if not null
-            Log.d("current location", mCurrentLocation.toString());
-            myLatLng= new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            Log.d("current location", myCurrentLocation.toString());
+            myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
         // Begin polling for new location updates.
         startLocationUpdates();
@@ -104,8 +133,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                 .setInterval(CONSTANTS.UPDATE_INTERVAL)
                 .setFastestInterval(CONSTANTS.FASTEST_INTERVAL);
         // Request location updates
-        if (CAN_ACCESS_LOCATION && mGoogleApiClient.isConnected()) {
-            CallWithPermission(getApplicationContext(), REQUEST_LOCATION_UPDATE);
+        if (mGoogleApiClient.isConnected()) {
+            //noinspection ResourceType
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
 
@@ -136,23 +166,24 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-        Location myCurrentLocation = null;
-        if (CAN_ACCESS_LOCATION && mGoogleApiClient.isConnected()) {
-            CallWithPermission(getApplicationContext(), GET_LAST_LOCATION);
-            myCurrentLocation = LocationServices.FusedLocationApi.
-                    getLastLocation(mGoogleApiClient);
+        myCurrentLocation = null;
+        if (mGoogleApiClient.isConnected()) {
+            //noinspection ResourceType
+            myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
+
         // Note that this can be NULL if last location isn't already known.
         if (myCurrentLocation != null) {
             // Print current location if not null
-            Log.d("current location", myCurrentLocation.toString());
+            Log.d("New location", myCurrentLocation.toString());
             myLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
         }
     }
 
     public void getIncidentsData(final Boolean showDialog) {
 
-        DownloadIncidentsData.TaskListener listener; listener = new DownloadIncidentsData.TaskListener() {
+        DownloadIncidentsData.TaskListener listener;
+        listener = new DownloadIncidentsData.TaskListener() {
 
             private ProgressDialog pDialog = new ProgressDialog(BaseActivity.this);
 
@@ -176,18 +207,19 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         new DownloadIncidentsData(listener).execute();
     }
 
-    public void useIncidentData() {}
+    public void useIncidentData() {
+    }
 
-    public void createAdapterList (int listView,int Layout){
+    public void createAdapterList(int listView, int Layout) {
 
-        ArrayAdapter Adapter = new browseAdapter(BaseActivity.this, Layout, IncidentArray);
+        ArrayAdapter Adapter = new BrowseAdapter(BaseActivity.this, Layout, IncidentArray);
         ListView browseListView = (ListView) findViewById(listView);
         browseListView.setAdapter(Adapter);
         browseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent checkIncident = new Intent(BaseActivity.this, viewIncidentsActivity.class);
+                Intent checkIncident = new Intent(BaseActivity.this, ViewInterest.class);
                 checkIncident.putExtra("position", Integer.toString(position));
 
                 startActivity(checkIncident);
@@ -198,14 +230,16 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     public static class DownloadIncidentsData extends AsyncTask<Void, Void, Void> {
 
         public int success;
+
         public interface TaskListener {
             void onStarted();
+
             void onFinished();
         }
 
         private final TaskListener taskListener;
 
-        public DownloadIncidentsData(TaskListener Listener){
+        public DownloadIncidentsData(TaskListener Listener) {
             this.taskListener = Listener;
         }
 
@@ -213,7 +247,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (this.taskListener != null){
+            if (this.taskListener != null) {
                 this.taskListener.onStarted();
             }
         }
@@ -296,7 +330,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
             }
             Log.d("Sorted Data", IncidentData.toString());
 
-            if (this.taskListener != null){
+            if (this.taskListener != null) {
                 this.taskListener.onFinished();
             }
 
@@ -310,12 +344,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
 
     //Handles permission and messages
     @TargetApi(Build.VERSION_CODES.M)
-    void CallWithPermission(Context context, final int requestCode) {
-        if (ActivityCompat.checkSelfPermission(BaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(BaseActivity.this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
+    void HandlePermissions(final Context context, final int requestCode) {
+        if (CANNOT_ACCESS_LOCATION) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Snackbar.make(findViewById(android.R.id.content), R.string.PERMISSION_RATIONALE_location,
                         Snackbar.LENGTH_INDEFINITE).setAction(R.string.ACCEPT, new View.OnClickListener() {
@@ -323,7 +353,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                     public void onClick(View v) {
                         ActivityCompat.requestPermissions(BaseActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
                         Snackbar.make(findViewById(android.R.id.content), R.string.PATH_permission_location, Snackbar.LENGTH_INDEFINITE).show();
-                    }}).show();
+                    }
+                }).show();
                 return;
             }
             ActivityCompat.requestPermissions(BaseActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
@@ -338,24 +369,20 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         Log.d("GRANT RESULTS", Arrays.toString(grantResults));
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Permission Granted
-            Toast.makeText(BaseActivity.this, "Permission granted!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BaseActivity.this, "Permission: \"" + permissions[0].substring(19) + "\" granted!", Toast.LENGTH_SHORT).show();
 
             switch (requestCode) {
-                case GET_LAST_LOCATION:
-                    mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    break;
-                case REQUEST_LOCATION_UPDATE:
-                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    break;
-                case SET_MY_LOCATION:
-                    mMap.setMyLocationEnabled(true);
+                case PermissionCode_LOCATION:
+                    CANNOT_ACCESS_LOCATION = false;
+                    Log.d("CANNOT_ACCESS_LOCATION", String.valueOf(CANNOT_ACCESS_LOCATION));
                     break;
                 default:
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         } else {
             // Permission Denied
-            Toast.makeText(BaseActivity.this, "Permission denied!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BaseActivity.this, "Permission: \"" + permissions[0].substring(19) + "\" denied!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

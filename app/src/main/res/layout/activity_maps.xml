@@ -3,7 +3,7 @@
 xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
 android:layout_height="match_parent" android:fitsSystemWindows="true"
-tools:context=".MapsActivity">
+tools:context=".Map">
 
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,7 +12,7 @@ tools:context=".MapsActivity">
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.civilien.app.MapsActivity" />
+        tools:context=".Map" />
 
 <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
     android:layout_width="wrap_content" android:layout_height="wrap_content"

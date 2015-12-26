@@ -43,7 +43,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
+public class Login extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     boolean Registering = false;
     /**
@@ -350,7 +350,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(Login.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -438,8 +438,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    Toast.makeText(Login.this, message, Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(Login.this, HomeScreen.class));
                     finish();
                     break;
                 case 2: mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -455,7 +455,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     mEmailView.requestFocus();
                     break;
                 default: Log.e("default case reached", message);
-                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(Login.this, message, Toast.LENGTH_LONG).show();
                     break;
             }
         }

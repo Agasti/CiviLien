@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,7 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class MainActivity extends BaseActivity {
+public class HomeScreen extends BaseActivity {
 
     Button map, browse, civimates, messages;
 
@@ -30,49 +28,52 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO fix savedState
-//        if (savedInstanceState != null){
-//            Log.d("SAVEDSTATE___", savedInstanceState.toString());
-//            try {
-//                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
-//                Log.w("User_Data", User_Data.toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        Log.d("SharedPref to load", getPreferences(MODE_PRIVATE).toString());
-        // restoring preferences
-        String AppData_user = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
-        Log.w("AppData_user", AppData_user);
-
-        if (!AppData_user.equals("EMPTY")) {
+        if (savedInstanceState != null){
+            Log.d("SAVEDSTATE___", savedInstanceState.toString());
             try {
-                User_Data = new JSONObject(AppData_user);
+                User_Data = new JSONObject(savedInstanceState.getString("User_Data"));
+                Log.w("Loaded User_Data", User_Data.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        } else {
+            Log.d("Loading SharedPref", getPreferences(MODE_PRIVATE).toString());
+            // restoring preferences
+            String AppData_user = getPreferences(Context.MODE_PRIVATE).getString("User_Data","EMPTY");
+//            Log.v("AppData_user", AppData_user);
 
-        String AppData_incidents = getPreferences(Context.MODE_PRIVATE).getString("IncidentData","EMPTY");
-        Log.w("AppData_incidents", AppData_incidents);
-
-        if (!AppData_incidents.equals("EMPTY")) {
-            try {
-                IncidentData = new JSONArray(AppData_incidents);
-                Log.w("IncidentData", IncidentData.toString());
-                for (int i = 0; i < IncidentData.length(); i++) {
-                    IncidentArray.add(new Incident(IncidentData.getJSONObject(i)));
+            if (!AppData_user.equals("EMPTY")) {
+                try {
+                    User_Data = new JSONObject(AppData_user);
+                    Log.w("Loaded User_Data", User_Data.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            }
+
+            String AppData_incidents = getPreferences(Context.MODE_PRIVATE).getString("IncidentData","EMPTY");
+//            Log.w("AppData_incidents", AppData_incidents);
+
+            if (!AppData_incidents.equals("EMPTY")) {
+                try {
+                    IncidentData = new JSONArray(AppData_incidents);
+                    Log.w("Loaded IncidentData", IncidentData.toString());
+                    for (int i = 0; i < IncidentData.length(); i++) {
+                        IncidentArray.add(new Incident(IncidentData.getJSONObject(i)));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
 
         // Login if not already did
-        if  (User_Data == null) {
-            startActivity(new Intent(MainActivity.this,
-                    LoginActivity.class));
+
+//        Log.w("User_Data", User_Data.());
+        if  (User_Data.isNull(TAGS.USERNAME)) {
+            startActivity(new Intent(HomeScreen.this,
+                    Login.class));
             finish();
         }
 
@@ -81,7 +82,7 @@ public class MainActivity extends BaseActivity {
         CreateIncident_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CreateIncident.class));
+                startActivity(new Intent(HomeScreen.this, CreateInterest.class));
             }
         });
 
@@ -89,7 +90,7 @@ public class MainActivity extends BaseActivity {
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                startActivity(new Intent(HomeScreen.this, Map.class));
             }
         });
 
@@ -97,7 +98,7 @@ public class MainActivity extends BaseActivity {
         browse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, BrowseActivity.class));
+                startActivity(new Intent(HomeScreen.this, Browse.class));
             }
         });
 
@@ -109,41 +110,23 @@ public class MainActivity extends BaseActivity {
         });*/
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onStop() {
 
         //TODO: remove comments after refreshing is handled automatically
-//        saveAppData();
+        saveAppData();
+        super.onStop();
+    }
 
+    @Override
+    protected void onDestroy() {
         // Disconnecting the client invalidates it.
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        super.onStop();
+        super.onDestroy();
     }
 
     public void saveAppData(){
