@@ -16,6 +16,7 @@ public class CreateIncident extends BaseActivity {
 
     Incident incident = null;
     int Success = 0;
+    String Category, Type, Username = "", Title, GPSLat, GPSLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,22 +24,35 @@ public class CreateIncident extends BaseActivity {
         setContentView(R.layout.activity_create_incident);
 
 
+        Button setMyLocation = (Button) findViewById(R.id.btn_myPosition);
+        setMyLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                GPSLat = Double.toString(myLatLng.latitude);
+                GPSLon = Double.toString(myLatLng.longitude);
+
+            }
+        });
         Button create = (Button) findViewById(R.id.btn_addIncident);
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String Category, Type, User, Title, GPSLat, GPSLon, Relevance;
 
                 Category = ((EditText) findViewById(R.id.textBox_Category)).getText().toString();
                 Type = ((EditText) findViewById(R.id.textBox_Type)).getText().toString();
                 Title = ((EditText) findViewById(R.id.textBox_Title)).getText().toString();
-                User = CONSTANTS.USERNAME;
-                GPSLat = Double.toString(myLatLng.latitude);
-                GPSLon = Double.toString(myLatLng.longitude);
+                GPSLat = ((EditText) findViewById(R.id.textBox_GPSLat)).getText().toString();
+                GPSLat = ((EditText) findViewById(R.id.textBox_GPSLon)).getText().toString();
+                try {
+                    Username = User_Data.getString(TAGS.USERNAME);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 try {
-                    incident = new Incident(Category, Type, User, Title, GPSLat, GPSLon);
+                    incident = new Incident(Category, Type, Username, Title, GPSLat, GPSLon);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

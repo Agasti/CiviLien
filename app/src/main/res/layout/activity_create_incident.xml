@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,91 +7,202 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.civilien.app.CreateIncident">
+    tools:context="com.civilien.app.CreateIncident"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.21"
+        android:clickable="false">
 
-        <RelativeLayout
-            android:orientation="vertical"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="left|top">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/IncidentCategory"
-                android:id="@+id/label_Category"
-                android:padding="20dp"
-                android:layout_marginTop="37dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Icon_Name"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:padding="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Title"
+                    android:id="@+id/Label_Title"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/Icon_Name"
+                    android:layout_toEndOf="@+id/Icon_Name"
+                    android:layout_marginLeft="20dp"
+                    android:paddingLeft="3dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textBox_Title"
+                    android:hint="Title of the incident"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignLeft="@+id/Label_Title"
+                    android:layout_alignStart="@+id/Label_Title" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Icon_Category"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:padding="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Category"
+                    android:id="@+id/Label_Category"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/Icon_Category"
+                    android:layout_toEndOf="@+id/Icon_Category"
+                    android:layout_marginLeft="20dp"
+                    android:paddingLeft="3dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textBox_Category"
+                    android:hint="Choose category"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignLeft="@+id/Label_Category"
+                    android:layout_alignStart="@+id/Label_Category" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/IncidentType"
-                android:id="@+id/label_Type"
-                android:padding="20dp"
-                android:layout_below="@+id/label_Category"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Icon_Type"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:padding="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Type"
+                    android:id="@+id/Label_Type"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/Icon_Type"
+                    android:layout_toEndOf="@+id/Icon_Type"
+                    android:layout_marginLeft="20dp"
+                    android:paddingLeft="3dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textBox_Type"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignLeft="@+id/Label_Type"
+                    android:layout_alignStart="@+id/Label_Type"
+                    android:hint="Choose type" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/IncidentTitle"
-                android:id="@+id/label_Title"
-                android:padding="20dp"
-                android:layout_below="@+id/label_Type"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp">
 
-            <EditText
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textBox_Category"
-                android:layout_alignBottom="@+id/label_Category"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:inputType="textNoSuggestions" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Icon_Position"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:padding="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp" />
 
-            <EditText
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textBox_Type"
-                android:layout_alignBottom="@+id/label_Type"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:inputType="textNoSuggestions" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Position"
+                    android:id="@+id/Label_Position"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/Icon_Position"
+                    android:layout_toEndOf="@+id/Icon_Position"
+                    android:layout_marginLeft="20dp"
+                    android:paddingLeft="3dp" />
 
-            <EditText
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textBox_Title"
-                android:layout_alignBottom="@+id/label_Title"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:inputType="textNoSuggestions" />
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textBox_GPSLat"
+                    android:ems="6"
+                    android:layout_alignLeft="@+id/Label_Position"
+                    android:layout_alignStart="@+id/Label_Position"
+                    android:hint="Latitude"
+                    android:layout_below="@+id/Label_Position" />
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textBox_GPSLon"
+                    android:ems="6"
+                    android:hint="Longitude"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/Label_Position" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_CreateIncident"
-                android:id="@+id/btn_addIncident"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="78dp" />
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:text="Choose my coordinates"
+                    android:id="@+id/btn_myPosition"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="false"
+                    android:layout_below="@+id/textBox_GPSLat"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignLeft="@+id/textBox_GPSLat" />
+            </RelativeLayout>
 
-        </RelativeLayout>
-    </FrameLayout>
-</RelativeLayout>
+
+        </LinearLayout>
+
+        </ScrollView>
+
+
+</LinearLayout>
