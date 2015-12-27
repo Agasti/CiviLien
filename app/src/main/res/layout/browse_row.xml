@@ -2,12 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="100dp"
     tools:context=".Browse"
     android:focusable="false"
-    android:paddingRight="10dp"
-    android:paddingLeft="0dp">
+    android:paddingRight="0dp"
+    android:paddingLeft="0dp"
+    android:background="#ffffff">
 
 
     <ImageView

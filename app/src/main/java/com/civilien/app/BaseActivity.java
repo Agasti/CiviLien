@@ -219,6 +219,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                Log.d("Item Clicked!", "");
                 Intent checkIncident = new Intent(BaseActivity.this, ViewInterest.class);
                 checkIncident.putExtra("position", Integer.toString(position));
 
