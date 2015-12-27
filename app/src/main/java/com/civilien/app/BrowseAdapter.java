@@ -45,7 +45,6 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             Holder = (ViewHolder) convertView.getTag();
         }
 
-
         Holder.Votes_label = (TextView) convertView.findViewById(R.id.label_Votes);
         Holder.PostDate_label = (TextView) convertView.findViewById(R.id.label_PostDate);
         Holder.Username_label = (TextView) convertView.findViewById(R.id.label_Username);
@@ -55,10 +54,10 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
         Holder.Category_label = (TextView) convertView.findViewById(R.id.label_Category);
         Holder.Type_label = (TextView) convertView.findViewById(R.id.label_Type);
         Holder.Category_icon= (ImageView) convertView.findViewById(R.id.imageView1);
-//        Holder.Type_icon= (ImageView) convertView.findViewById(R.id.imageView1);
+        Holder.Type_icon= (ImageView) convertView.findViewById(R.id.imageView2);
 
         try {
-            Holder.Votes_label.setText(element.getVotes().toString());
+//            Holder.Votes_label.setText(element.getVotes().toString());
             Holder.PostDate_label.setText(element.getPostDate().toString());
             Holder.Username_label.setText(element.getUsername().toString());
             Holder.Title_label.setText(element.getTitle().toString());
@@ -69,6 +68,7 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             Holder.Category_label.setText(Category);
             Holder.Type_label.setText(Type);
             Holder.GPSLon_label.setText(element.getGPSLon().toString());
+            Holder.Category_icon.setImageResource(R.drawable.icondot);
             Holder.Category_icon.setImageResource(R.drawable.icondot);
 //            Holder.Category_icon.setImageResource(parent.getResources().
 //                    getIdentifier(Category.replace(" ","_"),

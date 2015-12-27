@@ -8,10 +8,12 @@
     android:focusable="false"
     android:paddingRight="0dp"
     android:paddingLeft="0dp"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    >
 
 
     <ImageView
+        style="@style/ClickListnerFix"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/imageView1"
@@ -28,6 +30,7 @@
         android:layout_width="fill_parent"
         android:layout_height="40dp"
         android:id="@+id/label_Title"
+        style="@style/ClickListnerFix"
         android:textSize="12sp"
         android:textStyle="bold"
         android:text="Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title Incident Title "
@@ -42,6 +45,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/label_GPSLat"
         android:textSize="10sp"
+        style="@style/ClickListnerFix"
         android:textStyle="bold"
         android:text="GPSLat"
         android:layout_below="@+id/textView7"
@@ -59,6 +63,7 @@
         android:inputType="datetime"
         android:textStyle="italic"
         android:layout_alignParentBottom="true"
+        style="@style/ClickListnerFix"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -70,6 +75,7 @@
         android:textStyle="bold"
         android:text="GPSLon"
         android:layout_alignParentBottom="true"
+        style="@style/ClickListnerFix"
         android:layout_alignLeft="@+id/label_GPSLat"
         android:layout_alignStart="@+id/label_GPSLat" />
 
@@ -80,6 +86,7 @@
         android:textSize="8sp"
         android:textStyle="bold"
         android:text="User"
+        style="@style/ClickListnerFix"
         android:layout_above="@+id/textView4"
         android:layout_toRightOf="@+id/textView4"
         android:layout_toEndOf="@+id/textView4" />
@@ -91,6 +98,7 @@
         android:text="By:  "
         android:id="@+id/textView3"
         android:textSize="10sp"
+        style="@style/ClickListnerFix"
         android:layout_above="@+id/textView4"
         android:layout_toLeftOf="@+id/label_PostDate"
         android:layout_toStartOf="@+id/label_PostDate" />
@@ -102,6 +110,7 @@
         android:text="On:  "
         android:id="@+id/textView4"
         android:textSize="10sp"
+        style="@style/ClickListnerFix"
         android:layout_alignTop="@+id/label_GPSLon"
         android:layout_alignLeft="@+id/textView3"
         android:layout_alignStart="@+id/textView3" />
@@ -109,6 +118,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/ClickListnerFix"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/label_Category"
         android:textSize="8dp"
@@ -122,6 +132,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
+        style="@style/ClickListnerFix"
         android:text="/"
         android:id="@+id/textView6"
         android:textSize="8dp"
@@ -138,6 +149,7 @@
         android:id="@+id/label_Type"
         android:textSize="8dp"
         android:layout_alignBottom="@+id/textView6"
+        style="@style/ClickListnerFix"
         android:layout_toRightOf="@+id/textView6"
         android:layout_toEndOf="@+id/textView6"
         android:text="Type" />
@@ -151,6 +163,7 @@
         android:textColor="#e91a7e2e"
         android:inputType="number"
         android:textStyle="bold"
+        style="@style/ClickListnerFix"
         android:textSize="18dp"
         android:layout_above="@+id/textView3"
         android:layout_alignRight="@+id/label_PostDate"
@@ -164,6 +177,7 @@
         android:id="@+id/textView5"
         android:textSize="12dp"
         android:layout_marginLeft="6dp"
+        style="@style/ClickListnerFix"
         android:layout_alignBaseline="@+id/label_Votes"
         android:layout_alignBottom="@+id/label_Votes"
         android:layout_toRightOf="@+id/label_Votes"
@@ -179,8 +193,19 @@
         android:text="Coordinates:"
         android:textColor="#424242"
         android:layout_below="@+id/imageView1"
+        style="@style/ClickListnerFix"
         android:layout_toRightOf="@+id/imageView1"
         android:layout_toEndOf="@+id/imageView1" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/icondot"
+        style="@style/ClickListnerFix"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/imageView1"
+        android:layout_alignEnd="@+id/imageView1" />
 
 
 </RelativeLayout>

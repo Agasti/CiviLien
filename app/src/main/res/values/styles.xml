@@ -25,4 +25,9 @@
         <item name="android:visibility">gone</item>
     </style>
 
+    <style name="ClickListnerFix">
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+    </style>
 </resources>
