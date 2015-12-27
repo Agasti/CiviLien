@@ -46,15 +46,13 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
         }
 
 
-        try
-        {
-        Holder.Votes_label = (TextView) convertView.findViewById(R.id.label_PostDate);
+        Holder.Votes_label = (TextView) convertView.findViewById(R.id.label_Votes);
         Holder.PostDate_label = (TextView) convertView.findViewById(R.id.label_PostDate);
         Holder.Username_label = (TextView) convertView.findViewById(R.id.label_Username);
         Holder.Title_label = (TextView) convertView.findViewById(R.id.label_Title);
-        Holder.GPSLat_label = (TextView) convertView.findViewById(R.id.Label_GPSLat);
+        Holder.GPSLat_label = (TextView) convertView.findViewById(R.id.label_GPSLat);
         Holder.GPSLon_label = (TextView) convertView.findViewById(R.id.label_GPSLon);
-        Holder.Category_label = (TextView) convertView.findViewById(R.id.Label_Category);
+        Holder.Category_label = (TextView) convertView.findViewById(R.id.label_Category);
         Holder.Type_label = (TextView) convertView.findViewById(R.id.label_Type);
         Holder.Category_icon= (ImageView) convertView.findViewById(R.id.imageView1);
 //        Holder.Type_icon= (ImageView) convertView.findViewById(R.id.imageView1);
@@ -73,10 +71,10 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             Holder.GPSLon_label.setText(element.getGPSLon().toString());
             Holder.Category_icon.setImageResource(R.drawable.icondot);
 //            Holder.Category_icon.setImageResource(parent.getResources().
-//                    getIdentifier(element.getCategory().toString().replace(" ","_"),
+//                    getIdentifier(Category.replace(" ","_"),
 //                            "drawable",getContext().getPackageName()));
 //            Holder.Type_icon.setImageResource(parent.getResources().
-//                    getIdentifier(element.getType().toString().replace(" ","_"),
+//                    getIdentifier(Type.replace(" ","_"),
 //                            "drawable",getContext().getPackageName()));
         } catch (JSONException e) {
             e.printStackTrace();
