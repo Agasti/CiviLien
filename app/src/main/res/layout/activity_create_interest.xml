@@ -12,7 +12,7 @@
     android:weightSum="1">
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="0.21"
         android:clickable="false">
@@ -25,8 +25,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginBottom="10dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -89,14 +88,26 @@
                     android:layout_marginLeft="20dp"
                     android:paddingLeft="3dp" />
 
-                <EditText
-                    android:layout_width="fill_parent"
+                <Spinner
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textBox_Category"
-                    android:hint="Choose category"
+                    android:id="@+id/spinner_Category"
                     android:layout_alignParentBottom="true"
                     android:layout_alignLeft="@+id/Label_Category"
-                    android:layout_alignStart="@+id/Label_Category" />
+                    android:layout_alignStart="@+id/Label_Category"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0.21"
+                    android:addStatesFromChildren="false"
+                    android:spinnerMode="dropdown"
+                    android:splitMotionEvents="false" />
+                <!--<EditText-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/textBox_Category"-->
+                    <!--android:hint="Choose category"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignLeft="@+id/Label_Category"-->
+                    <!--android:layout_alignStart="@+id/Label_Category" />-->
 
             </RelativeLayout>
 
@@ -130,14 +141,25 @@
                     android:layout_marginLeft="20dp"
                     android:paddingLeft="3dp" />
 
-                <EditText
-                    android:layout_width="fill_parent"
+                <Spinner
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textBox_Type"
+                    android:id="@+id/spinner_Type"
                     android:layout_alignParentBottom="true"
                     android:layout_alignLeft="@+id/Label_Type"
                     android:layout_alignStart="@+id/Label_Type"
-                    android:hint="Choose type" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0.21"
+                    android:spinnerMode="dropdown"
+                    android:addStatesFromChildren="false" />
+                <!--<EditText-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/textBox_Type"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignLeft="@+id/Label_Type"-->
+                    <!--android:layout_alignStart="@+id/Label_Type"-->
+                    <!--android:hint="Choose type" />-->
 
             </RelativeLayout>
 
@@ -213,14 +235,7 @@
         android:orientation="vertical"
         android:layout_weight="0.21"></LinearLayout>
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.21"
-        android:spinnerMode="dialog"
-        android:addStatesFromChildren="false" />
+
 
 
 </LinearLayout>

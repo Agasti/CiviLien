@@ -27,8 +27,8 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         class ViewHolder {
-            TextView PostDate_View, Username_View, Title_View, GPSLat_View, GPSLon_View, IncId_view;
-            ImageView image_view;
+            TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
+            ImageView Category_icon, Type_icon;
         }
         Incident element = getItem(position);
         ViewHolder Holder;
@@ -37,6 +37,7 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             Holder = new ViewHolder();
             Context context = getContext();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            // Custom layout allows using the same adapter with different layouts
             convertView = inflater.inflate(customLayout, parent, false);
             convertView.setTag(Holder);
         }
@@ -45,22 +46,38 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
         }
 
 
-        Holder.IncId_view = (TextView) convertView.findViewById(R.id.text_ID);
-        Holder.PostDate_View = (TextView) convertView.findViewById(R.id.text_PostDate);
-        Holder.Username_View = (TextView) convertView.findViewById(R.id.text_Username);
-        Holder.Title_View = (TextView) convertView.findViewById(R.id.text_Title);
-        Holder.GPSLat_View = (TextView) convertView.findViewById(R.id.Label_GPSLat);
-        Holder.GPSLon_View = (TextView) convertView.findViewById(R.id.text_GPSLon);
-        Holder.image_view= (ImageView) convertView.findViewById(R.id.imageView1);
+        try
+        {
+        Holder.Votes_label = (TextView) convertView.findViewById(R.id.label_PostDate);
+        Holder.PostDate_label = (TextView) convertView.findViewById(R.id.label_PostDate);
+        Holder.Username_label = (TextView) convertView.findViewById(R.id.label_Username);
+        Holder.Title_label = (TextView) convertView.findViewById(R.id.label_Title);
+        Holder.GPSLat_label = (TextView) convertView.findViewById(R.id.Label_GPSLat);
+        Holder.GPSLon_label = (TextView) convertView.findViewById(R.id.label_GPSLon);
+        Holder.Category_label = (TextView) convertView.findViewById(R.id.Label_Category);
+        Holder.Type_label = (TextView) convertView.findViewById(R.id.label_Type);
+        Holder.Category_icon= (ImageView) convertView.findViewById(R.id.imageView1);
+//        Holder.Type_icon= (ImageView) convertView.findViewById(R.id.imageView1);
 
         try {
-            Holder.IncId_view.setText(element.getIncID().toString());
-            Holder.PostDate_View.setText(element.getPostDate().toString());
-            Holder.Username_View.setText(element.getUsername().toString());
-            Holder.Title_View.setText(element.getTitle().toString());
-            Holder.GPSLat_View.setText(element.getGPSLat().toString());
-            Holder.GPSLon_View.setText(element.getGPSLon().toString());
-            Holder.image_view.setImageResource(R.drawable.icondot);
+            Holder.Votes_label.setText(element.getVotes().toString());
+            Holder.PostDate_label.setText(element.getPostDate().toString());
+            Holder.Username_label.setText(element.getUsername().toString());
+            Holder.Title_label.setText(element.getTitle().toString());
+            Holder.GPSLat_label.setText(element.getGPSLat().toString());
+            Holder.GPSLon_label.setText(element.getGPSLon().toString());
+            String Category = element.getCategory().toString();
+            String Type = element.getType().toString();
+            Holder.Category_label.setText(Category);
+            Holder.Type_label.setText(Type);
+            Holder.GPSLon_label.setText(element.getGPSLon().toString());
+            Holder.Category_icon.setImageResource(R.drawable.icondot);
+//            Holder.Category_icon.setImageResource(parent.getResources().
+//                    getIdentifier(element.getCategory().toString().replace(" ","_"),
+//                            "drawable",getContext().getPackageName()));
+//            Holder.Type_icon.setImageResource(parent.getResources().
+//                    getIdentifier(element.getType().toString().replace(" ","_"),
+//                            "drawable",getContext().getPackageName()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

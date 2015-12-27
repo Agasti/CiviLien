@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="Categories">
-        <item>Road</item>
-        <item>Traffic lights panels</item>
-        <item>Garbage/other</item>
+        <item>Road condition</item>
+        <item>Vehicle traffic conditions</item>
+        <item>Traffic lights and signs</item>
+        <item>Pedestrian areas</item>
+        <item>Street lighting</item>
+        <item>Garbage and other</item>
     </string-array>
 
-    <string-array name="Road">
-        <item>Road</item>
-        <item>Traffic lights panels</item>
-        <item>Garbage/other</item>
+    <string-array name="Roadcondition">
+        <item>Speed bumps</item>
+        <item>Pot Holes</item>
+        <item>Damaged road</item>
     </string-array>
 
+    <string-array name="Vehicletrafficconditions">
+        <item>Traffic Jam</item>
+        <item>Slow traffic</item>
+        <item>Car accident</item>
+    </string-array>
+
+    <string-array name="Trafficlightsandsigns">
+        <item>Malfunctioning traffic light</item>
+        <item>Extremely weak traffic light</item>
+        <item>Traffic Light Missing </item>
+        <item>Traffic sign missing</item>
+        <item>Damaged traffic sign</item>
+    </string-array>
+
+    <string-array name="Pedestrianareas">
+        <item>Pothole </item>
+        <item>Uneven walkway </item>
+        <item>Construction area</item>
+        <item>Flooded area</item>
+        <item>High crime zone</item>
+    </string-array>
+
+
+    <string-array name="Streetlighting">
+    <item>Damaged lights</item>
+    <item>Weak light intensity</item>
+    <item>Flickering Lights</item>
+    </string-array>
+
+    <string-array name="Garbageandother">
+        <item>Missing Garbage bin</item>
+        <item>Garbage not collected</item>
+        <item>Other</item>
+    </string-array>
 </resources>
