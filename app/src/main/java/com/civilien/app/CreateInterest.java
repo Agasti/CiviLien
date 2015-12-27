@@ -28,7 +28,7 @@ public class CreateInterest extends BaseActivity {
     String Category, Type, Username = "", Title, GPSLat, GPSLon;
     EditText Title_box, Category_box, Type_box, Lat_box, Lon_box;
     Spinner Categories, Types;
-    static ArrayList<Spinner> spinners = new ArrayList<>();
+    final ArrayList<Spinner> spinners = new ArrayList<>();
     HashMap<String, String> values = new HashMap();
     String[] valuesList;
     ArrayList<ArrayAdapter> AdaptersArray = new ArrayList<>();
@@ -49,7 +49,10 @@ public class CreateInterest extends BaseActivity {
         valuesList = new String[]{"Category", "Type"};
 
         Categories = (Spinner) findViewById(R.id.spinner_Category);
+        Categories.setAdapter(null);
         Types = (Spinner) findViewById(R.id.spinner_Type);
+        Types.setAdapter(null);
+        spinners.clear();
         spinners.add(Categories);
         spinners.add(Types);
         Log.d("spinners", spinners.toString());
@@ -102,18 +105,24 @@ public class CreateInterest extends BaseActivity {
                     Spinner next = spinners.get(index + 1);
                     Log.d("next spinner", next.toString());
                     setSpinnerlistener(next, string.replace(" ",""), i + 1);
-                }
+                } else {}
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                spinner.setSelected(false);
 
             }
         });
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

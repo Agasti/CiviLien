@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="100dp"
+    android:layout_height="110dp"
     tools:context=".Browse"
     android:focusable="false"
     android:paddingRight="0dp"
@@ -192,10 +192,10 @@
         android:textStyle="bold"
         android:text="Coordinates:"
         android:textColor="#424242"
-        android:layout_below="@+id/imageView1"
         style="@style/ClickListnerFix"
-        android:layout_toRightOf="@+id/imageView1"
-        android:layout_toEndOf="@+id/imageView1" />
+        android:layout_below="@+id/imageView1"
+        android:layout_alignLeft="@+id/label_Title"
+        android:layout_alignStart="@+id/label_Title" />
 
     <ImageView
         android:layout_width="50dp"

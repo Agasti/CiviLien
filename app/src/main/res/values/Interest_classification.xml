@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="Categories">
-        <item>Road condition</item>
+        <item>Road conditions</item>
         <item>Vehicle traffic conditions</item>
         <item>Traffic lights and signs</item>
         <item>Pedestrian areas</item>
         <item>Street lighting</item>
         <item>Garbage and other</item>
+        <item>Other</item>
     </string-array>
 
-    <string-array name="Roadcondition">
+    <string-array name="Roadconditions">
         <item>Speed bumps</item>
         <item>Pot Holes</item>
         <item>Damaged road</item>
@@ -26,7 +27,7 @@
         <item>Extremely weak traffic light</item>
         <item>Traffic Light Missing </item>
         <item>Traffic sign missing</item>
-        <item>Damaged traffic sign</item>
+        <item>Damaged or missing traffic sign</item>
     </string-array>
 
     <string-array name="Pedestrianareas">
@@ -44,9 +45,12 @@
     <item>Flickering Lights</item>
     </string-array>
 
-    <string-array name="Garbageandother">
+    <string-array name="Garbage">
         <item>Missing Garbage bin</item>
         <item>Garbage not collected</item>
+    </string-array>
+
+    <string-array name="Other">
         <item>Other</item>
     </string-array>
 </resources>

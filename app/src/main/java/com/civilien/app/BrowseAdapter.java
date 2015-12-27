@@ -30,12 +30,13 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
             ImageView Category_icon, Type_icon;
         }
+
+        Context context = getContext();
         Incident element = getItem(position);
         ViewHolder Holder;
         if (convertView == null) {
 
             Holder = new ViewHolder();
-            Context context = getContext();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             // Custom layout allows using the same adapter with different layouts
             convertView = inflater.inflate(customLayout, parent, false);
@@ -58,6 +59,7 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
 
         try {
 //            Holder.Votes_label.setText(element.getVotes().toString());
+            Holder.Votes_label.setText(element.getVotes().toString());
             Holder.PostDate_label.setText(element.getPostDate().toString());
             Holder.Username_label.setText(element.getUsername().toString());
             Holder.Title_label.setText(element.getTitle().toString());
@@ -68,14 +70,14 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             Holder.Category_label.setText(Category);
             Holder.Type_label.setText(Type);
             Holder.GPSLon_label.setText(element.getGPSLon().toString());
-            Holder.Category_icon.setImageResource(R.drawable.icondot);
-            Holder.Category_icon.setImageResource(R.drawable.icondot);
-//            Holder.Category_icon.setImageResource(parent.getResources().
-//                    getIdentifier(Category.replace(" ","_"),
-//                            "drawable",getContext().getPackageName()));
-//            Holder.Type_icon.setImageResource(parent.getResources().
-//                    getIdentifier(Type.replace(" ","_"),
-//                            "drawable",getContext().getPackageName()));
+            int resource = context.getResources().getIdentifier(Category.toLowerCase().replace(" ", ""), "drawable", getContext().getPackageName());
+            if (resource != 0) {
+            Holder.Category_icon.setImageResource(resource);
+            } else {Holder.Category_icon.setImageResource(R.drawable.ic_warning_category);}
+            resource = getContext().getResources().getIdentifier(Type.toLowerCase().replace(" ", ""),"drawable", getContext().getPackageName());
+            if (resource != 0) {
+                Holder.Category_icon.setImageResource(resource);
+            }else Holder.Type_icon.setImageResource(R.drawable.ic_warning_type);
         } catch (JSONException e) {
             e.printStackTrace();
         }
