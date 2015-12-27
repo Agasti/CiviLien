@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -110,16 +111,47 @@ public class ViewInterest extends BaseActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_view_incidents, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
+            TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
+            ImageView Category_icon, Type_icon;
+
+            Votes_label = (TextView) rootView.findViewById(R.id.label_Votes);
+            PostDate_label = (TextView) rootView.findViewById(R.id.label_PostDate);
+            Username_label = (TextView) rootView.findViewById(R.id.label_Username);
+            Title_label = (TextView) rootView.findViewById(R.id.label_Title);
+            GPSLat_label = (TextView) rootView.findViewById(R.id.label_GPSLat);
+            GPSLon_label = (TextView) rootView.findViewById(R.id.label_GPSLon);
+            Category_label = (TextView) rootView.findViewById(R.id.label_Category);
+            Type_label = (TextView) rootView.findViewById(R.id.label_Type);
+            Category_icon= (ImageView) rootView.findViewById(R.id.imageView1);
+            Type_icon= (ImageView) rootView.findViewById(R.id.imageView2);
 
             try {
-                textView.setText("Section Number:" + Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER))+ "\n Incident ID:" + IncidentData.getJSONObject(
-                        getArguments().getInt(ARG_SECTION_NUMBER)).
-                        get(TAGS.INC_ID).toString());
+                Incident element = new Incident(IncidentData.getJSONObject(getArguments().getInt(ARG_SECTION_NUMBER)));
+
+                Votes_label.setText(element.getVotes().toString());
+                PostDate_label.setText(element.getPostDate().toString());
+                Username_label.setText(element.getUsername().toString());
+                Title_label.setText(element.getTitle().toString());
+                GPSLat_label.setText(element.getGPSLat().toString());
+                GPSLon_label.setText(element.getGPSLon().toString());
+                String Category = element.getCategory().toString();
+                String Type = element.getType().toString();
+                Category_label.setText(Category);
+                Type_label.setText(Type);
+                GPSLon_label.setText(element.getGPSLon().toString());
+                int resource = getContext().getResources().getIdentifier(Category.toLowerCase().replace(" ", ""), "drawable", getContext().getPackageName());
+                if (resource != 0) {
+                    Category_icon.setImageResource(resource);
+                } else {Category_icon.setImageResource(R.drawable.ic_warning_category);}
+                resource = getContext().getResources().getIdentifier(Type.toLowerCase().replace(" ", ""),"drawable", getContext().getPackageName());
+                if (resource != 0) {
+                    Category_icon.setImageResource(resource);
+                }else Type_icon.setImageResource(R.drawable.ic_warning_type);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             return rootView;
         }
     }
