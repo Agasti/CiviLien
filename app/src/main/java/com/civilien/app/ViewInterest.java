@@ -1,21 +1,27 @@
 package com.civilien.app;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ViewInterest extends BaseActivity {
 
@@ -33,6 +39,11 @@ public class ViewInterest extends BaseActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    static TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
+    static Incident element;
+    static Context context;
+    static View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +121,11 @@ public class ViewInterest extends BaseActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_view_incidents, container, false);
+            rootView = inflater.inflate(R.layout.fragment_view_incidents, container, false);
 
-            TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
             ImageView Category_icon, Type_icon;
+
+            context = getContext();
 
             Votes_label = (TextView) rootView.findViewById(R.id.label_Votes);
             PostDate_label = (TextView) rootView.findViewById(R.id.label_PostDate);
@@ -126,9 +138,11 @@ public class ViewInterest extends BaseActivity {
             Category_icon= (ImageView) rootView.findViewById(R.id.imageView1);
             Type_icon= (ImageView) rootView.findViewById(R.id.imageView2);
 
+            String ID = null;
             try {
-                Incident element = new Incident(IncidentData.getJSONObject(getArguments().getInt(ARG_SECTION_NUMBER)));
+                element = new Incident(IncidentData.getJSONObject(getArguments().getInt(ARG_SECTION_NUMBER)));
 
+                ID = element.getString(TAGS.INC_ID);
                 Votes_label.setText(element.getVotes().toString());
                 PostDate_label.setText(element.getPostDate().toString());
                 Username_label.setText(element.getUsername().toString());
@@ -152,7 +166,102 @@ public class ViewInterest extends BaseActivity {
                 e.printStackTrace();
             }
 
+            ImageButton Upvote, Downvote;
+            Upvote = (ImageButton) rootView.findViewById(R.id.Upvote_imageButton);
+            final String finalID = ID;
+            Upvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (finalID != null) {
+                        JSONObject vote = new JSONObject();
+                        try {
+                            vote.put(TAGS.INC_ID, finalID);
+                            vote.put(TAGS.USERNAME, User_Data.getString("Username"));
+                            vote.put("Value","1");
+                            vote.put("Vote", finalID +":"+"1");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        new sendIncidentData().execute(vote);
+                    } else Log.e("ID", finalID);
+                }
+            });
+
+            Downvote = (ImageButton) rootView.findViewById(R.id.DownVote_imageButton);
+            Downvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (finalID != null) {
+                        JSONObject vote = new JSONObject();
+                        try {
+                            vote.put(TAGS.INC_ID, finalID);
+                            vote.put(TAGS.USERNAME, User_Data.getString("Username"));
+                            vote.put("Value", "-1");
+                            vote.put("Vote", TAGS.INC_ID+"_"+finalID +":"+"-1");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        new sendIncidentData().execute(vote);
+                    } else Log.e("ID", finalID);
+                }
+            });
+
+
             return rootView;
+        }
+
+        class sendIncidentData extends AsyncTask<JSONObject, Void, JSONObject> {
+
+
+            public ProgressDialog pDialog= new ProgressDialog(getContext());
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                pDialog.setMessage("Voting...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(true);
+                pDialog.show();
+            }
+
+            @Override
+            protected JSONObject doInBackground(JSONObject...  args) {
+                HTTPHelper request = new HTTPHelper();
+                return request.JSON_POST_Request(CONSTANTS.URL_VOTE, args);
+            }
+
+            @Override
+            protected void onPostExecute(final JSONObject response) {
+                super.onPostExecute(response);
+                try {
+                    int success = Integer.parseInt(response.getString(TAGS.SUCCESS));;
+                    String Message = response.get("Message").toString();
+                    int newVotes = Integer.parseInt(response.get("Result").toString());
+                    pDialog.dismiss();
+
+                    if (success == 1) {
+                        try {
+                            newVotes = Integer.parseInt(element.getString(TAGS.VOTES)) + newVotes;
+                            element.setVotes(Integer.toString(newVotes));
+                            TextView votes = (TextView) rootView.findViewById(R.id.label_Votes);
+                            votes.postInvalidate();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.d("Vote", Message);
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                        }
+//                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
         }
     }
 
@@ -188,4 +297,6 @@ public class ViewInterest extends BaseActivity {
             return null;
         }
     }
+
+
 }

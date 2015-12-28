@@ -16,6 +16,7 @@ public class CONSTANTS {
     static final String URL_CREATE_INCIDENT = "http://"+CONSTANTS.IP_ADDRESS +"/create_incident.php";
     static final String URL_LOGIN = "http://"+CONSTANTS.IP_ADDRESS+"/app_login.php";
     static final String URL_REGISTER = "http://"+CONSTANTS.IP_ADDRESS+"/app_register.php";
+    static final String URL_VOTE = "http://"+CONSTANTS.IP_ADDRESS+"/app_vote.php";
 
     public CONSTANTS() {
     }
