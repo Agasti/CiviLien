@@ -11,6 +11,7 @@ import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -97,9 +98,13 @@ public class Map extends BaseActivity implements OnMapReadyCallback {
 
         for (int i = 0;  i < length; i++) {
 
+            String Category = "";
+            String Type = "";
             try {
                 lat = Double.parseDouble(array.getJSONObject(i).getString(TAGS.GPS_LAT));
                 lon = Double.parseDouble(array.getJSONObject(i).getString(TAGS.GPS_LON));
+                Category = array.getJSONObject(i).getString(TAGS.CATEGORY);
+                Type = array.getJSONObject(i).getString(TAGS.TYPE);
                 MarkerTitle = array.getJSONObject(i).get(TAGS.INC_ID).toString();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -108,7 +113,13 @@ public class Map extends BaseActivity implements OnMapReadyCallback {
             lon = lon + ((double) r.nextInt(100) / 10000);
             IncidentPosition[i] = new LatLng(lat, lon);
 //            Log.d("NEXT LAT_LON", Double.toString(lat) + " - " + Double.toString(lon));
-            mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
+            int resource = Map.this.getResources().getIdentifier("marker_"+Type.toLowerCase().replace(" ", ""), "drawable", getPackageName());
+            if (resource == 0) {
+                resource = Map.this.getResources().getIdentifier("marker_"+Category.toLowerCase().replace(" ", ""), "drawable", getPackageName());
+            }
+            if (resource != 0) {
+                mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(resource)).position(IncidentPosition[i]).title(MarkerTitle));
+            }else mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
             Log.d("___MARKER " + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

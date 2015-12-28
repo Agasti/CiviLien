@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -25,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ViewInterest extends BaseActivity {
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -34,17 +35,19 @@ public class ViewInterest extends BaseActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    private static ViewPager mViewPager;
 
-    static TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
+    static TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_l;
     static Incident element;
     static Context context;
     static View rootView;
+    static int position;
+    static String newVotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class ViewInterest extends BaseActivity {
         setContentView(R.layout.activity_view_interest);
 
         Intent callerIntent = getIntent();
-        int position = Integer.parseInt(callerIntent.getStringExtra("position"));
+        position = Integer.parseInt(callerIntent.getStringExtra("position"));
 //        Log.d("ViewIncident_position", Integer.toString(position));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -128,7 +131,8 @@ public class ViewInterest extends BaseActivity {
 
             context = getContext();
 
-            Votes_label = (TextView) rootView.findViewById(R.id.label_Votes);
+            Votes_l = (TextView) rootView.findViewById(R.id.label_Votes);
+            Votes_l.setWillNotDraw(false);
             PostDate_label = (TextView) rootView.findViewById(R.id.label_PostDate);
             Username_label = (TextView) rootView.findViewById(R.id.label_Username);
             Title_label = (TextView) rootView.findViewById(R.id.label_Title);
@@ -144,7 +148,7 @@ public class ViewInterest extends BaseActivity {
                 element = new Incident(IncidentData.getJSONObject(getArguments().getInt(ARG_SECTION_NUMBER)));
 
                 ID = element.getString(TAGS.INC_ID);
-                Votes_label.setText(element.getVotes().toString());
+                Votes_l.setText(element.getVotes().toString());
                 PostDate_label.setText(element.getPostDate().toString());
                 Username_label.setText(element.getUsername().toString());
                 Title_label.setText(element.getTitle().toString());
@@ -179,7 +183,7 @@ public class ViewInterest extends BaseActivity {
                             vote.put(TAGS.INC_ID, finalID);
                             vote.put(TAGS.USERNAME, User_Data.getString("Username"));
                             vote.put("Value","1");
-                            vote.put("Vote", finalID +":"+"1");
+                            vote.put("Vote", TAGS.INC_ID+"_"+finalID +":"+"1");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -237,36 +241,44 @@ public class ViewInterest extends BaseActivity {
                 try {
                     int success = Integer.parseInt(response.getString(TAGS.SUCCESS));;
                     String Message = response.get("Message").toString();
-                    int newVotes = Integer.parseInt(response.get("Result").toString());
+                    newVotes = response.get("Result").toString();
                     pDialog.dismiss();
 
                     if (success == 1) {
                         try {
-                            newVotes = Integer.parseInt(element.getString(TAGS.VOTES)) + newVotes;
-                            element.setVotes(Integer.toString(newVotes));
-                            TextView votes = (TextView) rootView.findViewById(R.id.label_Votes);
-                            votes.setText(Integer.toString(newVotes));
-                            ViewGroup vg = (ViewGroup) rootView.findViewById(R.id.Fragment_myView);
-                            vg.invalidate();
+                            JSONObject o = IncidentData.getJSONObject(position);
+                            o.put(TAGS.VOTES, newVotes);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    Toast.makeText(context,Message,Toast.LENGTH_LONG).show();
+                    ViewInterest.runOnUI(new Runnable() {
+                        @Override
+                        public void run() {
+                            Votes_l.setText(newVotes);
+                            Votes_l.invalidate();
+                            rootView.invalidate();
+                        }
+                    });
+                    Toast.makeText(context,Message,Toast.LENGTH_SHORT).show();
                     Log.d("Vote", Message);
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                        }
-//                    });
+//                    mSectionsPagerAdapter.notifyDataSetChanged();
+//                    rootView.invalidate();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
 
-
         }
+    }
+    public static Handler UIHandler;
+
+    static
+    {
+        UIHandler = new Handler(Looper.getMainLooper());
+    }
+    public static void runOnUI(Runnable runnable) {
+        UIHandler.post(runnable);
     }
 
     /**

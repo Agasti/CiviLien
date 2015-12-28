@@ -76,7 +76,7 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
             } else {Holder.Category_icon.setImageResource(R.drawable.ic_warning_category);}
             resource = getContext().getResources().getIdentifier(Type.toLowerCase().replace(" ", ""),"drawable", getContext().getPackageName());
             if (resource != 0) {
-                Holder.Category_icon.setImageResource(resource);
+                Holder.Type_icon.setImageResource(resource);
             }else Holder.Type_icon.setImageResource(R.drawable.ic_warning_type);
         } catch (JSONException e) {
             e.printStackTrace();
