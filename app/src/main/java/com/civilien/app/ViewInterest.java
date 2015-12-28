@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -244,11 +245,14 @@ public class ViewInterest extends BaseActivity {
                             newVotes = Integer.parseInt(element.getString(TAGS.VOTES)) + newVotes;
                             element.setVotes(Integer.toString(newVotes));
                             TextView votes = (TextView) rootView.findViewById(R.id.label_Votes);
-                            votes.postInvalidate();
+                            votes.setText(Integer.toString(newVotes));
+                            ViewGroup vg = (ViewGroup) rootView.findViewById(R.id.Fragment_myView);
+                            vg.invalidate();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                    Toast.makeText(context,Message,Toast.LENGTH_LONG).show();
                     Log.d("Vote", Message);
 //                    runOnUiThread(new Runnable() {
 //
