@@ -11,6 +11,7 @@ import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -62,6 +63,10 @@ public class Map extends BaseActivity implements OnMapReadyCallback {
 
         mMap = googleMap;
 
+        UiSettings uiSettings = mMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
+        uiSettings.setCompassEnabled(true);
+        mMap.setPadding(0,0,40,200);
         if (!CANNOT_ACCESS_LOCATION) {
             //noinspection ResourceType
             mMap.setMyLocationEnabled(true);
@@ -109,8 +114,8 @@ public class Map extends BaseActivity implements OnMapReadyCallback {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            lat = lat + ((double) r.nextInt(100) / 10000);
-            lon = lon + ((double) r.nextInt(100) / 10000);
+            lat = lat + ((double) (r.nextInt(100) - 50) / 10000);
+            lon = lon + ((double) (r.nextInt(100) - 50)/ 10000);
             IncidentPosition[i] = new LatLng(lat, lon);
 //            Log.d("NEXT LAT_LON", Double.toString(lat) + " - " + Double.toString(lon));
             int resource = Map.this.getResources().getIdentifier("marker_"+Type.toLowerCase().replace(" ", ""), "drawable", getPackageName());
@@ -118,7 +123,7 @@ public class Map extends BaseActivity implements OnMapReadyCallback {
                 resource = Map.this.getResources().getIdentifier("marker_"+Category.toLowerCase().replace(" ", ""), "drawable", getPackageName());
             }
             if (resource != 0) {
-                mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(resource)).position(IncidentPosition[i]).title(MarkerTitle));
+                mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle).icon(BitmapDescriptorFactory.fromResource(resource)));
             }else mMap.addMarker(new MarkerOptions().position(IncidentPosition[i]).title(MarkerTitle));
             Log.d("___MARKER " + Integer.toString(i) + " ADDED___", IncidentPosition[i].toString());
 

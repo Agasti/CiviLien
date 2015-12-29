@@ -72,7 +72,6 @@ public class Login extends BaseActivity implements LoaderCallbacks<Cursor> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        new UserLoginTask("sehail.fillali@gmail.com", "hadak").execute(CONSTANTS.URL_LOGIN);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);

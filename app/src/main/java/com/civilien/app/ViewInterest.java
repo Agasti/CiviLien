@@ -165,7 +165,7 @@ public class ViewInterest extends BaseActivity {
                 } else {Category_icon.setImageResource(R.drawable.ic_warning_category);}
                 resource = getContext().getResources().getIdentifier(Type.toLowerCase().replace(" ", ""),"drawable", getContext().getPackageName());
                 if (resource != 0) {
-                    Category_icon.setImageResource(resource);
+                    Type_icon.setImageResource(resource);
                 }else Type_icon.setImageResource(R.drawable.ic_warning_type);
             } catch (JSONException e) {
                 e.printStackTrace();

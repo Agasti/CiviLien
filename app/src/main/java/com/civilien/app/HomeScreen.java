@@ -56,7 +56,7 @@ public class HomeScreen extends BaseActivity {
             String AppData_incidents = getPreferences(Context.MODE_PRIVATE).getString("IncidentData","EMPTY");
 //            Log.w("AppData_incidents", AppData_incidents);
 
-            if (!AppData_incidents.equals("EMPTY")) {
+                if (!AppData_incidents.equals("EMPTY")) {
                 try {
                     IncidentData = new JSONArray(AppData_incidents);
                     Log.w("Loaded IncidentData", IncidentData.toString());
