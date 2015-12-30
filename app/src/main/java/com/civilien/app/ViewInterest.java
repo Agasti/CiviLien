@@ -122,6 +122,12 @@ public class ViewInterest extends BaseActivity {
             return fragment;
         }
 
+        public void updateTextView(int view, String text) {
+
+            TextView textView = (TextView) getView().findViewById(view);
+            textView.setText(text);
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -246,22 +252,22 @@ public class ViewInterest extends BaseActivity {
 
                     if (success == 1) {
                         try {
-                            JSONObject o = IncidentData.getJSONObject(position);
-                            o.put(TAGS.VOTES, newVotes);
+                            IncidentData.getJSONObject(position).put(TAGS.VOTES, newVotes);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    ViewInterest.runOnUI(new Runnable() {
-                        @Override
-                        public void run() {
-                            Votes_l.setText(newVotes);
-                            Votes_l.invalidate();
-                            rootView.invalidate();
-                        }
-                    });
+//                    ViewInterest.runOnUI(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Votes_l.setText(newVotes);
+//                            Votes_l.invalidate();
+//                            rootView.invalidate();
+//                        }
+//                    });
                     Toast.makeText(context,Message,Toast.LENGTH_SHORT).show();
                     Log.d("Vote", Message);
+                    updateTextView(R.id.label_Votes, newVotes);
 //                    mSectionsPagerAdapter.notifyDataSetChanged();
 //                    rootView.invalidate();
                 } catch (JSONException e) {

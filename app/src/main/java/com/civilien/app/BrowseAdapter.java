@@ -23,17 +23,18 @@ class BrowseAdapter extends ArrayAdapter<Incident> {
         this.customLayout = myLayout;
     }
 
+    class ViewHolder {
+        TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
+        ImageView Category_icon, Type_icon;
+    }
+    public static ViewHolder Holder;
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        class ViewHolder {
-            TextView PostDate_label, Category_label, Type_label, Username_label, Title_label, GPSLat_label, GPSLon_label, Votes_label;
-            ImageView Category_icon, Type_icon;
-        }
 
         Context context = getContext();
         Incident element = getItem(position);
-        ViewHolder Holder;
         if (convertView == null) {
 
             Holder = new ViewHolder();

@@ -117,7 +117,7 @@ public class HomeScreen extends BaseActivity {
     protected void onStop() {
 
         //TODO: remove comments after refreshing is handled automatically
-        saveAppData();
+//        saveAppData();
         super.onStop();
     }
 

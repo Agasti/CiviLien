@@ -17,6 +17,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,7 +44,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class Login extends BaseActivity implements LoaderCallbacks<Cursor> {
+public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     boolean Registering = false;
     /**
@@ -409,7 +410,7 @@ public class Login extends BaseActivity implements LoaderCallbacks<Cursor> {
             }
             if (resultCode == 1) {
                 try {
-                    User_Data = response.getJSONObject("User_Data");
+                    BaseActivity.User_Data = response.getJSONObject("User_Data");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -433,7 +434,7 @@ public class Login extends BaseActivity implements LoaderCallbacks<Cursor> {
             switch (resultCode) {
                 case 1:
                     try {
-                        User_Data = response.getJSONObject("User_Data");
+                        BaseActivity.User_Data = response.getJSONObject("User_Data");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
